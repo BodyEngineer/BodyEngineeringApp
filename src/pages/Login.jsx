@@ -47,9 +47,18 @@ export default function Login() {
       <div className="login-bg-pattern" />
       <div className="login-container">
         <div className="login-card">
+        <div className="portal-tabs">
+  <button className="portal-tab active">
+    Owner Portal
+  </button>
+
+  <a href="/member-login" className="portal-tab">
+    Member Portal
+  </a>
+</div>
           <div className="login-header">
             <Logo size="lg" showTagline />
-            <p className="login-subtitle">Owner Portal — Sign in to manage your gym</p>
+            <p className="login-subtitle">Manage Your Fitness Studio</p>
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
@@ -60,7 +69,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="owner@bodyengineering.com"
+              placeholder="admin@bodyengineering.com"
               required
               autoComplete="email"
             />
@@ -78,6 +87,7 @@ export default function Login() {
             <Button type="submit" loading={submitting} className="login-btn">
               Sign In
             </Button>
+   
           </form>
 
           <p className="login-footer">

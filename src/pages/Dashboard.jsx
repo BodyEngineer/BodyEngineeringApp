@@ -90,6 +90,12 @@ export default function Dashboard() {
               icon={RefreshCw}
               variant="danger"
             />
+            <DashboardCard
+  title="Monthly Revenue"
+  value={`₹${stats.monthlyRevenue || 0}`}
+  icon={RefreshCw}
+  variant="success"
+/>
           </div>
 
           <section className="dashboard-section">

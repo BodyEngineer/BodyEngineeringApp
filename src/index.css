@@ -128,6 +128,12 @@ textarea {
   color: var(--color-white);
   flex-shrink: 0;
 }
+.logo-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+
+}
 
 .logo-text {
   display: flex;
@@ -136,7 +142,7 @@ textarea {
 
 .logo-title {
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.5px;
   line-height: 1.2;
 }
 
@@ -147,7 +153,8 @@ textarea {
 .logo-tagline {
   color: var(--color-gray-500);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 2px;
+  margin-top: 4px;
   text-transform: uppercase;
 }
 
@@ -245,8 +252,8 @@ textarea {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-red);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  border-color: #ff4d4d;
+  box-shadow: 0 0 0 15px rgba(255, 77, 77, 0.3);
 }
 
 .form-input::placeholder,
@@ -483,8 +490,8 @@ textarea {
 /* Dashboard Stats */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
@@ -1078,17 +1085,25 @@ textarea {
 .login-container {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 550px;
 }
 
 .login-card {
+  transition: all 0.3s ease;
   background: var(--color-black-soft);
   border: 1px solid var(--color-gray-800);
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
-  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+  box-shadow:
+0 0 20px rgba(255,60,60,0.10),
+0 15px 40px rgba(0,0,0,0.5);
 }
 
+.login-card:hover {
+  transform: translateY(-3px);
+  transition: all 0.3s ease;
+}
 .login-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -1113,13 +1128,96 @@ textarea {
 .login-btn {
   width: 100%;
   margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow:
+0 0 30px rgba(255,60,60,0.15),
+0 15px 40px rgba(0,0,0,0.5);
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+0 0 40px rgba(255,60,60,0.25),
+0 20 50px rgba(255,60,60,0.5);
 }
 
+.portal-tabs {
+  display: flex;
+  background: #111;
+  padding: 6px;
+  border-radius: 16px;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.portal-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #bbb;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.portal-tab.active {
+  background: linear-gradient(
+    135deg,
+    #ff4d4d,
+    #ff2424
+  );
+  color: white;
+}
+
+.portal-tab:hover {
+  color: white;
+}
 .login-footer {
   text-align: center;
   margin-top: 2rem;
   font-size: 0.8125rem;
   color: var(--color-gray-600);
+}
+.divider {
+  text-align: center;
+  margin: 15px 0;
+  color: #888;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.member-login-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: #ff4d4d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.member-login-btn:hover {
+  background: rgba(255,77,77,0.12);
+  border-color: #ff4d4d;
 }
 
 /* Responsive */
@@ -1214,5 +1312,59 @@ textarea {
 
   .login-card {
     padding: 2rem 1.25rem;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stat-card {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .stat-card-default {
+    border-left: 4px solid #ff4d4d;
+  }
+  
+  .stat-card-success {
+    border-left: 4px solid #22c55e;
+  }
+  
+  .stat-card-warning {
+    border-left: 4px solid #f59e0b;
+  }
+  
+  .stat-card-danger {
+    border-left: 4px solid #ef4444;
+  }
+  
+  .stat-card-label {
+    color: #9ca3af;
+    font-size: 0.85rem;
+  }
+  
+  .stat-card-value {
+    display: block;
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+  
+  .stat-card-icon {
+    color: #ff4d4d;
   }
 }

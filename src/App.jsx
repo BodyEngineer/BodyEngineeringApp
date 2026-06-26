@@ -1,3 +1,4 @@
+import MemberLogin from './pages/MemberLogin'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -10,6 +11,7 @@ import EditMember from './pages/EditMember'
 import MemberDetail from './pages/MemberDetail'
 import Attendance from './pages/Attendance'
 import Alerts from './pages/Alerts'
+import MemberDashboard from './pages/MemberDashboard'
 
 export default function App() {
   return (
@@ -17,6 +19,11 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/member-login" element={<MemberLogin />} />
+          <Route
+           path="/member-dashboard"
+           element={<MemberDashboard />}
+            />
           <Route
             element={
               <ProtectedRoute>
@@ -35,6 +42,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        
       </BrowserRouter>
     </AuthProvider>
   )

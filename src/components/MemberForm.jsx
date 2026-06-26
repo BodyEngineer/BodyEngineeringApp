@@ -8,10 +8,11 @@ const initialForm = {
   full_name: '',
   email: '',
   phone: '',
+  password: '',
   membership_type: 'monthly',
   membership_start: new Date().toISOString().split('T')[0],
   membership_end: '',
-  notes: '',
+  notes: ''
 }
 
 export default function MemberForm({ member, onSubmit, loading, submitLabel = 'Save Member' }) {
@@ -24,6 +25,7 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
         full_name: member.full_name || '',
         email: member.email || '',
         phone: member.phone || '',
+        password: '',
         membership_type: member.membership_type || 'monthly',
         membership_start: member.membership_start || initialForm.membership_start,
         membership_end: member.membership_end || '',
@@ -51,6 +53,11 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
     const newErrors = {}
     if (!form.full_name.trim()) newErrors.full_name = 'Full name is required'
     if (!form.phone.trim()) newErrors.phone = 'Phone number is required'
+    if (!form.email.trim())
+      newErrors.email = 'Email is required'
+    
+    if (!form.password.trim() && !member)
+      newErrors.password = 'Password is required'
     if (!form.membership_start) newErrors.membership_start = 'Start date is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -58,6 +65,7 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    alert("Member Form Submit")
     if (!validate()) return
     onSubmit(form)
   }
@@ -90,6 +98,15 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
           onChange={handleChange}
           placeholder="member@email.com"
         />
+        <Input
+  label="Password *"
+  name="password"
+  type="password"
+  value={form.password}
+  onChange={handleChange}
+  error={errors.password}
+  placeholder="Create password"
+/>
         <Select
           label="Membership Plan"
           name="membership_type"

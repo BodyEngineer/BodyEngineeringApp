@@ -26,23 +26,29 @@ export default function Members() {
     fetchMembers()
   }, [user])
 
-  const fetchMembers = async () => {
-    if (!user) return
-    setLoading(true)
-
-    const { data, error: fetchError } = await supabase
-      .from('members')
-      .select('*')
-      .eq('owner_id', user.id)
-      .order('full_name')
-
-    if (fetchError) {
-      setError(fetchError.message)
-    } else {
-      setMembers(data || [])
+    const fetchMembers = async () => {
+      if (!user) return
+    
+      setLoading(true)
+    
+      console.log("Logged in user:", user)
+      console.log("User ID:", user.id)
+    
+      const { data, error: fetchError } = await supabase
+        .from("members")
+        .select("*")
+    
+      console.log("Fetched members:", data)
+      console.log("Fetch error:", fetchError)
+    
+      if (fetchError) {
+        setError(fetchError.message)
+      } else {
+        setMembers(data || [])
+      }
+    
+      setLoading(false)
     }
-    setLoading(false)
-  }
 
   const handleDelete = async () => {
     if (!deleteTarget) return

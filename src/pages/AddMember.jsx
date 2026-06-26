@@ -13,26 +13,40 @@ export default function AddMember() {
   const [error, setError] = useState('')
 
   const handleSubmit = async (form) => {
-    if (!user) return
+    if (!user) {
+      setError("Owner not logged in")
+      return
+    }
+  
     setLoading(true)
-    setError('')
-
-    const { error: insertError } = await supabase.from('members').insert({
-      owner_id: user.id,
-      full_name: form.full_name.trim(),
-      email: form.email.trim() || null,
-      phone: form.phone.trim(),
-      membership_type: form.membership_type,
-      membership_start: form.membership_start,
-      membership_end: form.membership_end,
-      notes: form.notes.trim() || null,
-    })
-
-    if (insertError) {
-      setError(insertError.message)
+    setError("")
+  
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "create-member",
+        {
+          body: {
+            owner_id: user.id,
+            full_name: form.full_name.trim(),
+            email: form.email.trim(),
+            password: form.password,
+            phone: form.phone.trim(),
+            membership_type: form.membership_type,
+            membership_start: form.membership_start,
+            membership_end: form.membership_end,
+            notes: form.notes.trim(),
+          },
+        }
+      )
+  
+      if (error) throw error
+  
+      navigate("/members")
+    } catch (err) {
+      console.error(err)
+      setError(err.message || "Failed to create member")
+    } finally {
       setLoading(false)
-    } else {
-      navigate('/members')
     }
   }
 
