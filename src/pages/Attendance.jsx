@@ -34,7 +34,6 @@ export default function Attendance() {
       supabase
         .from('members')
         .select('*')
-        .eq('owner_id', user.id)
         .order('full_name'),
       supabase
         .from('attendance')
@@ -43,6 +42,9 @@ export default function Attendance() {
         .order('check_in', { ascending: false })
         .limit(50),
     ])
+
+    console.log("Logged in user:", user.id)
+    console.log("Member:", membersRes.data)
 
     if (membersRes.error) {
       setError(membersRes.error.message)
