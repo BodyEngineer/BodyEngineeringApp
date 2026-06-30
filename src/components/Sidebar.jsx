@@ -5,6 +5,7 @@ import {
   UserPlus,
   CalendarCheck,
   Bell,
+  ClipboardList,
   LogOut,
   X,
 } from 'lucide-react'
@@ -13,9 +14,19 @@ import { useAuth } from '../context/AuthContext'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+
   { to: '/members', icon: Users, label: 'Members' },
+
   { to: '/members/add', icon: UserPlus, label: 'Add Member' },
+
   { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
+
+  {
+    to: '/body-assessment',
+    icon: ClipboardList,
+    label: 'Transformation Assessment',
+  },
+
   { to: '/alerts', icon: Bell, label: 'Renewal Alerts' },
 ]
 

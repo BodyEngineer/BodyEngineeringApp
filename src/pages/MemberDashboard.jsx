@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+
 
 export default function MemberDashboard() {
   const [member, setMember] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [checkedInToday, setCheckedInToday] = useState(false);
+  const [assessment, setAssessment] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadMember();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/member-login")
+  }
   async function loadMember() {
     const {
       data: { user },
@@ -42,6 +51,15 @@ const checkedInToday =
   ) || false;
 
 setCheckedInToday(checkedInToday);
+const { data: latestAssessment, error } = await supabase
+  .from("body_assessments")
+  .select("*");
+
+console.log("Logged in member ID:", data.id);
+console.log("Assessments:", latestAssessment);
+console.log("Error:", error);
+
+setAssessment(latestAssessment?.[0] || null);
     }
   }
 
@@ -103,17 +121,24 @@ setCheckedInToday(checkedInToday);
 
   <div className="hero-right">
 
-    <div
-      className={
-        daysRemaining > 0
-          ? "badge badge-active"
-          : "badge badge-expired"
-      }
-    >
-      {daysRemaining > 0 ? "ACTIVE" : "EXPIRED"}
-    </div>
-
+  <div
+    className={
+      daysRemaining > 0
+        ? "badge badge-active"
+        : "badge badge-expired"
+    }
+  >
+    {daysRemaining > 0 ? "ACTIVE" : "EXPIRED"}
   </div>
+
+  <button
+    className="logout-btn"
+    onClick={handleLogout}
+  >
+    🚪 Sign Out
+  </button>
+
+</div>
 
 </div>
 
@@ -188,11 +213,24 @@ setCheckedInToday(checkedInToday);
   <h3>Diet Plan</h3>
   <p>Coming Soon</p>
 </div>
-
 <div className="quick-card">
-  <div className="quick-icon">📈</div>
-  <h3>Progress</h3>
-  <p>Coming Soon</p>
+
+  <div className="quick-icon">❤️</div>
+
+  <h3>My Transformation</h3>
+
+  <p>
+    View Measurements,
+    Progress & Coach Notes
+  </p>
+
+  <button
+    className="view-btn"
+    onClick={() => navigate("/member-dashboard/my-transformation")}
+  >
+    View Full Report →
+  </button>
+
 </div>
 
 </div>

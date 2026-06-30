@@ -24,7 +24,27 @@ export default function MemberLogin() {
     if (error) {
       setError(error.message)
     } else {
-      window.location.href = '/member-dashboard'
+    
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+    
+      const { data: member } = await supabase
+        .from("members")
+        .select("id")
+        .eq("auth_user_id", user.id)
+        .single();
+    
+      if (!member) {
+    
+        await supabase.auth.signOut();
+    
+        setError("Access denied. This account is not a member.");
+    
+        return;
+      }
+    
+      window.location.href = "/member-dashboard";
     }
   
     setSubmitting(false)

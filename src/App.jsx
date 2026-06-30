@@ -12,6 +12,8 @@ import MemberDetail from './pages/MemberDetail'
 import Attendance from './pages/Attendance'
 import Alerts from './pages/Alerts'
 import MemberDashboard from './pages/MemberDashboard'
+import BodyAssessment from './pages/BodyAssessment'
+import MyTransformation from "./pages/MyTransformation";
 
 export default function App() {
   return (
@@ -24,6 +26,12 @@ export default function App() {
            path="/member-dashboard"
            element={<MemberDashboard />}
             />
+
+<Route
+  path="/member-dashboard/my-transformation"
+  element={<MyTransformation />}
+/>
+
           <Route
             element={
               <ProtectedRoute>
@@ -37,6 +45,14 @@ export default function App() {
             <Route path="/members/:id" element={<MemberDetail />} />
             <Route path="/members/:id/edit" element={<EditMember />} />
             <Route path="/attendance" element={<Attendance />} />
+ 
+
+            <Route
+  path="/body-assessment"
+  element={<BodyAssessment />}
+/>
+
+
             <Route path="/alerts" element={<Alerts />} />
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
