@@ -53,13 +53,18 @@ const checkedInToday =
 setCheckedInToday(checkedInToday);
 const { data: latestAssessment, error } = await supabase
   .from("body_assessments")
-  .select("*");
+  .select("*")
+  .eq("member_id", data.id)
+  .order("assessment_date", { ascending: false })
+  .limit(1)
+  .single();
 
-console.log("Logged in member ID:", data.id);
-console.log("Assessments:", latestAssessment);
-console.log("Error:", error);
-
-setAssessment(latestAssessment?.[0] || null);
+if (error) {
+  console.log(error);
+} else {
+  setAssessment(latestAssessment);
+}
+ 
     }
   }
 
@@ -85,22 +90,25 @@ setAssessment(latestAssessment?.[0] || null);
 
   return (
     <div className="page">
-{/* HERO */}
+{/* PREMIUM HERO */}
 
-<div className="member-hero">
+<div className="premium-hero">
 
-  <div className="member-left">
+  <div className="hero-left">
 
-    <img
-      src="https://i.pravatar.cc/160"
-      alt="profile"
-      className="member-avatar"
-    />
+    <div className="avatar-ring">
+      <img
+        src={member.profile_photo || "https://i.pravatar.cc/200"}
+        className="member-avatar"
+        alt="profile"
+      />
+    </div>
 
     <div>
 
-      <p className="member-hero-subtitle">
-        BODY ENGINEERING
+      <p className="hero-brand">
+        BODY ENGINEERING 
+        Female Fitness Studio
       </p>
 
       <h1>
@@ -110,10 +118,29 @@ setAssessment(latestAssessment?.[0] || null);
         </span>
       </h1>
 
-      <p className="member-message">
+      <p className="hero-message">
         💪 Every workout makes you stronger.
-        Keep pushing your limits.
       </p>
+       
+      <p className="hero-quote">
+        "The Body Achieves What Mind Believes".
+      </p>
+
+      <div className="hero-stats">
+
+        <div className="hero-pill">
+          🏆 {member.membership_type}
+        </div>
+
+        <div className="hero-pill">
+          ❤️ {assessment?.goal || "Fitness Goal"}
+        </div>
+
+        <div className="hero-pill">
+          ⚖️ {assessment?.weight || "--"} kg
+        </div>
+
+      </div>
 
     </div>
 
@@ -121,57 +148,82 @@ setAssessment(latestAssessment?.[0] || null);
 
   <div className="hero-right">
 
-  <div
-    className={
-      daysRemaining > 0
-        ? "badge badge-active"
-        : "badge badge-expired"
-    }
-  >
-    {daysRemaining > 0 ? "ACTIVE" : "EXPIRED"}
+    <div className="status-pill">
+      {daysRemaining > 0 ? "🟢 ACTIVE" : "🔴 EXPIRED"}
+    </div>
+
+    <div className="days-box">
+
+      <h1>{daysRemaining}</h1>
+
+      <p>Days Remaining</p>
+
+    </div>
+
+    <button
+      className="logout-btn"
+      onClick={handleLogout}
+    >
+      Sign Out
+    </button>
+
   </div>
 
-  <button
-    className="logout-btn"
-    onClick={handleLogout}
-  >
-    🚪 Sign Out
-  </button>
-
 </div>
-
-</div>
-
       {/* MEMBERSHIP */}
 
-      <div className="member-card">
+      <div className="assessment-card">
 
-        <h2>Membership Details</h2>
+  <h2>📊 Fitness Overview</h2>
 
-        <div className="membership-grid">
+  <div className="quick-grid">
 
-          <div className="membership-box">
-            <div className="membership-icon">📋</div>
-            <p className="membership-label">Membership</p>
-            <h3>{member.membership_type}</h3>
-          </div>
+  <div className="quick-card">
 
-          <div className="membership-box">
-            <div className="membership-icon">📅</div>
-            <p className="membership-label">Expiry Date</p>
-            <h3>{member.membership_end}</h3>
-          </div>
+<div className="quick-icon">👤</div>
 
-          <div className="membership-box">
-            <div className="membership-icon">⏳</div>
-            <p className="membership-label">Days Remaining</p>
-            <h3>{daysRemaining} Days</h3>
-          </div>
+<h3>My Profile</h3>
 
-        </div>
+<p>
+  Update your personal information
+</p>
 
-      </div>
+<button
+  className="view-btn"
+  onClick={() => navigate("/member-dashboard/profile")}
+>
+  Open Profile →
+</button>
 
+</div>
+
+    <div className="quick-card">
+      <div className="quick-icon">⚖️</div>
+      <h3>Weight</h3>
+      <h1>{assessment?.weight || "--"} kg</h1>
+    </div>
+
+    <div className="quick-card">
+      <div className="quick-icon">❤️</div>
+      <h3>BMI</h3>
+      <h1>{assessment?.bmi || "--"}</h1>
+    </div>
+
+    <div className="quick-card">
+      <div className="quick-icon">💧</div>
+      <h3>Body Fat</h3>
+      <h1>{assessment?.body_fat || "--"}%</h1>
+    </div>
+
+    <div className="quick-card">
+      <div className="quick-icon">🏋️</div>
+      <h3>Total Visits</h3>
+      <h1>{attendance.length}</h1>
+    </div>
+
+  </div>
+
+</div>
   {/* QUICK ACCESS */}
 
 <div className="quick-grid">

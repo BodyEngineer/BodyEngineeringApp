@@ -8,6 +8,7 @@ import {
   ClipboardList,
   LogOut,
   X,
+  Globe,
 } from 'lucide-react'
 import Logo from './Logo'
 import { useAuth } from '../context/AuthContext'
@@ -16,6 +17,12 @@ const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
 
   { to: '/members', icon: Users, label: 'Members' },
+
+  {
+    to: '/online-clients',
+    icon: Globe,
+    label: 'Online Clients',
+  },
 
   { to: '/members/add', icon: UserPlus, label: 'Add Member' },
 

@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import ImagePicker from "../components/ImagePicker";
 
 export default function BodyAssessment() {
   const [members, setMembers] = useState([]);
   const [memberId, setMemberId] = useState("");
+
+
+const [frontBefore, setFrontBefore] = useState(null);
+const [sideBefore, setSideBefore] = useState(null);
+const [backBefore, setBackBefore] = useState(null);
+
+const [frontAfter, setFrontAfter] = useState(null);
+const [sideAfter, setSideAfter] = useState(null);
+const [backAfter, setBackAfter] = useState(null);
 
   const [form, setForm] = useState({
     height: "",
@@ -71,6 +81,7 @@ export default function BodyAssessment() {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSave = async () => {
     if (!memberId) {
       alert("Please select a member.");
@@ -86,15 +97,64 @@ console.log("User ID:", user?.id);
 console.log("Selected Member:", memberId);
     // Check whether assessment already exists
 
-const { data: existingAssessment } = await supabase
-.from("body_assessments")
-.select("id")
-.eq("member_id", memberId)
-.maybeSingle();
+const today = new Date().toISOString().split("T")[0];
 
+const {
+    data: existingAssessments,
+    error: existingError,
+  } = await supabase
+    .from("body_assessments")
+    .select("*")
+    .eq("member_id", memberId)
+    .eq("assessment_date", today);
+  
+  console.log(existingAssessments);
+  console.log(existingError);
+  
+  const existingAssessment = existingAssessments?.[0] || null;
+
+  console.log("Existing Assessment:", existingAssessment);
+
+  async function uploadPhoto(file, folder) {
+    if (!file) return null;
+  
+    const fileName = `${memberId}/${Date.now()}-${folder}-${file.name}`;
+  
+    const { error } = await supabase.storage
+      .from("transformation-photos")
+      .upload(fileName, file);
+  
+    if (error) {
+      console.log(error);
+      return null;
+    }
+  
+    const { data } = supabase.storage
+      .from("transformation-photos")
+      .getPublicUrl(fileName);
+  
+    return data.publicUrl;
+  }
+  
+  const frontBeforeUrl = await uploadPhoto(frontBefore, "front-before");
+  const sideBeforeUrl = await uploadPhoto(sideBefore, "side-before");
+  const backBeforeUrl = await uploadPhoto(backBefore, "back-before");
+  
+  const frontAfterUrl = await uploadPhoto(frontAfter, "front-after");
+  const sideAfterUrl = await uploadPhoto(sideAfter, "side-after");
+  const backAfterUrl = await uploadPhoto(backAfter, "back-after");
+  
 const assessmentData = {
 owner_id: user.id,
 member_id: memberId,
+
+front_before: frontBeforeUrl || existingAssessment?.front_before,
+side_before: sideBeforeUrl || existingAssessment?.side_before,
+back_before: backBeforeUrl || existingAssessment?.back_before,
+
+front_after: frontAfterUrl || existingAssessment?.front_after,
+side_after: sideAfterUrl || existingAssessment?.side_after,
+back_after: backAfterUrl || existingAssessment?.back_after,
 
 height: form.height || null,
 weight: form.weight || null,
@@ -124,7 +184,7 @@ right_calf: form.right_calf || null,
 goal: form.goal,
 coach_notes: form.coach_notes,
 
-assessment_date: new Date().toISOString().split("T")[0],
+assessment_date: today,
 };
 
 let error;
@@ -433,14 +493,85 @@ onChange={handleChange}
 
 <div style={{ 
     marginTop: "35px" ,
-    display: "flex" ,
-    judtifyContent: "flex-end" ,
+
     }}>
-<button className="save-btn" onClick={handleSave}>
-  Save Assessment
-</button>
+
+<div className="assessment-card">
+
+<h2>📷 Transformation Photos</h2>
+
+<div className="assessment-card photo-section">
+
+  <h3 className="photo-heading">📸 Before Photos</h3>
+
+  <div className="photo-grid">
+
+    <ImagePicker
+      label="Front Before"
+      value={frontBefore}
+      onChange={setFrontBefore}
+    />
+
+    <ImagePicker
+      label="Side Before"
+      value={sideBefore}
+      onChange={setSideBefore}
+    />
+
+    <ImagePicker
+      label="Back Before"
+      value={backBefore}
+      onChange={setBackBefore}
+    />
+
+  </div>
+  </div>
+
+  <div className="assessment-card photo-section">
+
+<h3 className="photo-heading">✨ After Photos</h3>
+
+<div className="photo-grid">
+
+    <ImagePicker
+      label="Front After"
+      value={frontAfter}
+      onChange={setFrontAfter}
+    />
+
+    <ImagePicker
+      label="Side After"
+      value={sideAfter}
+      onChange={setSideAfter}
+    />
+
+    <ImagePicker
+      label="Back After"
+      value={backAfter}
+      onChange={setBackAfter}
+    />
+
+  </div>
+  </div>
 </div>
-    </div>
+  
+  <button
+    className="save-btn"
+    onClick={handleSave}
+    style={{
+      marginTop: "25px",
+      width: "100%",
+      maxWidth: "350px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+    }}
+  >
+    Save Assessment
+  </button>
+
+</div>
+</div>
     
 
   );

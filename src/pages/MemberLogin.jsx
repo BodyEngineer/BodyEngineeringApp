@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Logo from '../components/Logo'
 import Input from '../components/Input'
 import Button from '../components/Button'
@@ -9,6 +10,7 @@ export default function MemberLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -44,7 +46,7 @@ export default function MemberLogin() {
         return;
       }
     
-      window.location.href = "/member-dashboard";
+      navigate ("/member-dashboard", { replace: true})
     }
   
     setSubmitting(false)

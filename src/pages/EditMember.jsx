@@ -1,49 +1,81 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
-import Header from '../components/Header'
-import MemberForm from '../components/MemberForm'
-import LoadingSpinner from '../components/LoadingSpinner'
-import { supabase } from '../lib/supabase'
-import { useAuth } from '../context/AuthContext'
+import { useEffect, useState } from "react";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import MemberForm from "../components/MemberForm";
+import ImagePicker from "../components/ImagePicker";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 export default function EditMember() {
-  const { id } = useParams()
-  const { openSidebar } = useOutletContext()
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [member, setMember] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const { id } = useParams();
+  const { openSidebar } = useOutletContext();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [member, setMember] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchMember()
-  }, [id, user])
+    fetchMember();
+  }, [id, user]);
 
-  const fetchMember = async () => {
-    if (!user || !id) return
+  async function fetchMember() {
+    if (!user) return;
 
-    const { data, error: fetchError } = await supabase
-      .from('members')
-      .select('*')
-      .eq('id', id)
-      .eq('owner_id', user.id)
-      .single()
+    const { data, error } = await supabase
+      .from("members")
+      .select("*")
+      .eq("id", id)
+      .eq("owner_id", user.id)
+      .single();
 
-    if (fetchError) {
-      setError(fetchError.message)
+    if (error) {
+      setError(error.message);
     } else {
-      setMember(data)
+      setMember(data);
     }
-    setLoading(false)
+
+    setLoading(false);
   }
 
-  const handleSubmit = async (form) => {
-    setSaving(true)
-    setError('')
+  async function handleSubmit(form) {
+    setSaving(true);
+    setError("");
+
+    let profilePhotoUrl = member.profile_photo;
+
+    if (profilePhoto) {
+      setUploading(true);
+
+      const fileName = `${id}-${Date.now()}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("profile-photos")
+        .upload(fileName, profilePhoto);
+
+      if (uploadError) {
+        setError(uploadError.message);
+        setSaving(false);
+        setUploading(false);
+        return;
+      }
+
+      const { data } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(fileName);
+
+      profilePhotoUrl = data.publicUrl;
+
+      setUploading(false);
+    }
 
     const { error: updateError } = await supabase
-      .from('members')
+      .from("members")
       .update({
         full_name: form.full_name.trim(),
         email: form.email.trim() || null,
@@ -52,54 +84,65 @@ export default function EditMember() {
         membership_start: form.membership_start,
         membership_end: form.membership_end,
         notes: form.notes.trim() || null,
+        profile_photo: profilePhotoUrl,
       })
-      .eq('id', id)
+      .eq("id", id);
 
     if (updateError) {
-      setError(updateError.message)
-      setSaving(false)
-    } else {
-      navigate(`/members/${id}`)
+      setError(updateError.message);
+      setSaving(false);
+      return;
     }
+
+    navigate(`/members/${id}`);
   }
 
   if (loading) {
     return (
       <div className="page">
-        <div className="page-loading">
-          <LoadingSpinner size="lg" />
-        </div>
+        <LoadingSpinner size="lg" />
       </div>
-    )
-  }
-
-  if (!member && !loading) {
-    return (
-      <div className="page">
-        <Header title="Member Not Found" onMenuClick={openSidebar} />
-        <div className="alert alert-error">This member could not be found.</div>
-      </div>
-    )
+    );
   }
 
   return (
     <div className="page">
+
       <Header
         title="Edit Member"
-        subtitle={member?.full_name}
+        subtitle={member.full_name}
         onMenuClick={openSidebar}
       />
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && (
+        <div className="alert alert-error">
+          {error}
+        </div>
+      )}
 
       <div className="form-card">
+
+        <ImagePicker
+          label="Profile Photo"
+          image={profilePhoto}
+          setImage={setProfilePhoto}
+        />
+
+        {uploading && (
+          <div className="alert alert-info">
+            Uploading image...
+          </div>
+        )}
+
         <MemberForm
           member={member}
           onSubmit={handleSubmit}
           loading={saving}
           submitLabel="Save Changes"
         />
+
       </div>
+
     </div>
-  )
+  );
 }
