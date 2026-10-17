@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from '../components/Logo'
@@ -11,6 +12,7 @@ export default function Login() {
   const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -74,15 +76,59 @@ export default function Login() {
               autoComplete="email"
             />
 
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              autoComplete="current-password"
-            />
+<div className="form-group">
+  <label className="form-label">
+    Password
+  </label>
+
+  <div style={{ position: "relative" }}>
+    <input
+      type={showPassword ? "text" : "password"}
+      className="form-input"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter your password"
+      autoComplete="current-password"
+      required
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "18px",
+        border: "none",
+        background: "transparent",
+        cursor: "pointer",
+        color: "#ff4438"
+      }}
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
+
+<div
+  style={{
+    textAlign: "right",
+    marginTop: "8px",
+    marginBottom: "18px",
+  }}
+>
+  <a
+    href="/owner-forgot-password"
+    style={{
+      color: "#ff4438",
+      textDecoration: "none",
+      fontSize: "14px",
+      fontWeight: "600",
+    }}
+  >
+    Forgot Password?
+  </a>
+</div>
 
             <Button type="submit" loading={submitting} className="login-btn">
               Sign In

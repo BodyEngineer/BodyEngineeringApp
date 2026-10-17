@@ -1,0 +1,508 @@
+/* =========================================
+   PREMIUM TESTIMONIAL / GOOGLE REVIEWS
+========================================= */
+
+.testimonial-section {
+    position: relative;
+    background:
+      radial-gradient(
+        circle at 50% 45%,
+        rgba(255, 45, 45, 0.08),
+        transparent 38%
+      ),
+      #080808;
+  
+    color: #fff;
+    padding: 90px 8%;
+    overflow: hidden;
+  }
+  
+  .testimonial-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* =========================================
+     HEADING
+  ========================================= */
+  
+  .testimonial-heading {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 55px;
+  }
+  
+  .testimonial-label {
+    color: #ff3b30;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 5px;
+    margin-bottom: 14px;
+  }
+  
+  .testimonial-heading h2 {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 58px);
+    line-height: 1.08;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+  }
+  
+  .testimonial-heading h2 span {
+    color: #ff3b30;
+  }
+  
+  .testimonial-subtitle {
+    max-width: 650px;
+    margin: 20px auto 0;
+    color: #aaa;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  
+  /* =========================================
+     GOOGLE RATING
+  ========================================= */
+  
+  .google-rating {
+    margin-top: 25px;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  
+    flex-wrap: wrap;
+  }
+  
+  .google-word {
+    font-size: 17px;
+    font-weight: 700;
+    color: #eee;
+  }
+  
+  .google-word > span {
+    font-size: 21px;
+    font-weight: 900;
+  }
+  
+  .rating-stars {
+    color: #fbbc04;
+    letter-spacing: 3px;
+    font-size: 18px;
+  }
+  
+  .google-rating strong {
+    font-size: 17px;
+  }
+  
+  /* =========================================
+     SLIDER
+  ========================================= */
+  
+  .testimonial-slider {
+    position: relative;
+  
+    max-width: 850px;
+    margin: 0 auto;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* =========================================
+     REVIEW CARD
+  ========================================= */
+  
+  .review-card {
+    position: relative;
+  
+    width: 100%;
+    min-height: 310px;
+  
+    padding: 42px;
+  
+    border-radius: 28px;
+  
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.07),
+        rgba(255, 255, 255, 0.02)
+      );
+  
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.45),
+      0 0 55px rgba(255, 45, 45, 0.08);
+  
+    backdrop-filter: blur(15px);
+  
+    animation: reviewFade 0.5s ease;
+  }
+  
+  @keyframes reviewFade {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* =========================================
+     REVIEW TOP
+  ========================================= */
+  
+  .review-top {
+    display: flex;
+    align-items: center;
+  }
+  
+  .review-avatar {
+    width: 58px;
+    height: 58px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    flex-shrink: 0;
+  
+    border-radius: 50%;
+  
+    background: linear-gradient(
+      135deg,
+      #ff493d,
+      #c8150b
+    );
+  
+    color: #fff;
+  
+    font-size: 23px;
+    font-weight: 900;
+  
+    box-shadow: 0 8px 25px rgba(255, 45, 45, 0.3);
+  }
+  
+  .review-person {
+    margin-left: 16px;
+  }
+  
+  .review-person h3 {
+    margin: 0 0 4px;
+  
+    font-size: 20px;
+    font-weight: 800;
+  }
+  
+  .review-person span {
+    color: #999;
+    font-size: 13px;
+  }
+  
+  .google-icon {
+    margin-left: auto;
+  
+    width: 42px;
+    height: 42px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+  
+    background: #fff;
+  
+    color: #4285f4;
+  
+    font-size: 23px;
+    font-weight: 900;
+  }
+  
+  /* =========================================
+     STARS + TEXT
+  ========================================= */
+  
+  .review-stars {
+    margin-top: 27px;
+  
+    color: #fbbc04;
+  
+    font-size: 21px;
+    letter-spacing: 4px;
+  }
+  
+  .review-text {
+    margin: 20px 0 0;
+  
+    color: #eee;
+  
+    font-size: 19px;
+    line-height: 1.75;
+  
+    font-weight: 500;
+  }
+  
+  .verified-review {
+    margin-top: 25px;
+  
+    color: #999;
+  
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  /* =========================================
+     ARROWS
+  ========================================= */
+  
+  .review-arrow {
+    position: absolute;
+    top: 50%;
+  
+    z-index: 5;
+  
+    width: 52px;
+    height: 52px;
+  
+    transform: translateY(-50%);
+  
+    border-radius: 50%;
+  
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  
+    background: #111;
+  
+    color: #fff;
+  
+    font-size: 34px;
+    line-height: 1;
+  
+    cursor: pointer;
+  
+    transition: 0.3s ease;
+  
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  
+  .left-arrow {
+    left: -80px;
+  }
+  
+  .right-arrow {
+    right: -80px;
+  }
+  
+  .review-arrow:hover {
+    background: #ff3b30;
+  
+    border-color: #ff3b30;
+  
+    transform:
+      translateY(-50%)
+      scale(1.08);
+  
+    box-shadow:
+      0 10px 35px rgba(255, 45, 45, 0.35);
+  }
+  
+  /* =========================================
+     DOTS
+  ========================================= */
+  
+  .review-dots {
+    margin-top: 30px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    gap: 10px;
+  }
+  
+  .review-dot {
+    width: 9px;
+    height: 9px;
+  
+    padding: 0;
+  
+    border: none;
+    border-radius: 50%;
+  
+    background: #444;
+  
+    cursor: pointer;
+  
+    transition: 0.3s ease;
+  }
+  
+  .review-dot.active {
+    width: 30px;
+  
+    border-radius: 20px;
+  
+    background: #ff3b30;
+  
+    box-shadow:
+      0 0 18px rgba(255, 45, 45, 0.6);
+  }
+  
+  /* =========================================
+     GOOGLE REVIEWS BUTTON
+  ========================================= */
+  
+  .testimonial-cta {
+    margin-top: 32px;
+    text-align: center;
+  }
+  
+  .google-review-btn {
+    display: inline-flex;
+  
+    align-items: center;
+    justify-content: center;
+  
+    gap: 12px;
+  
+    padding: 15px 28px;
+  
+    border-radius: 50px;
+  
+    border: 1px solid rgba(255, 255, 255, 0.13);
+  
+    background: rgba(255, 255, 255, 0.04);
+  
+    color: #fff;
+  
+    text-decoration: none;
+  
+    font-size: 14px;
+    font-weight: 700;
+  
+    transition: 0.3s ease;
+  }
+  
+  .google-review-btn span {
+    color: #ff3b30;
+  
+    font-size: 20px;
+  
+    transition: 0.3s ease;
+  }
+  
+  .google-review-btn:hover {
+    border-color: #ff3b30;
+  
+    background: rgba(255, 45, 45, 0.08);
+  
+    transform: translateY(-3px);
+  }
+  
+  .google-review-btn:hover span {
+    transform: translateX(5px);
+  }
+  
+  /* =========================================
+     TABLET
+  ========================================= */
+  
+  @media (max-width: 1050px) {
+  
+    .left-arrow {
+      left: -25px;
+    }
+  
+    .right-arrow {
+      right: -25px;
+    }
+  }
+  
+  /* =========================================
+     MOBILE
+  ========================================= */
+  
+  @media (max-width: 768px) {
+  
+    .testimonial-section {
+      padding: 70px 20px;
+    }
+  
+    .testimonial-heading {
+      margin-bottom: 40px;
+    }
+  
+    .testimonial-heading h2 {
+      font-size: 38px;
+    }
+  
+    .testimonial-subtitle {
+      font-size: 15px;
+    }
+  
+    .review-card {
+      padding: 28px 24px;
+      min-height: 330px;
+    }
+  
+    .review-text {
+      font-size: 16px;
+    }
+  
+    .review-arrow {
+      width: 42px;
+      height: 42px;
+  
+      font-size: 28px;
+    }
+  
+    .left-arrow {
+      left: -10px;
+    }
+  
+    .right-arrow {
+      right: -10px;
+    }
+  }
+  
+  /* =========================================
+     SMALL MOBILE
+  ========================================= */
+  
+  @media (max-width: 480px) {
+  
+    .testimonial-heading h2 {
+      font-size: 33px;
+    }
+  
+    .review-card {
+      padding: 25px 20px;
+    }
+  
+    .review-avatar {
+      width: 48px;
+      height: 48px;
+    }
+  
+    .review-person h3 {
+      font-size: 17px;
+    }
+  
+    .google-icon {
+      width: 35px;
+      height: 35px;
+  
+      font-size: 19px;
+    }
+  
+    .review-arrow {
+      display: none;
+    }
+  }

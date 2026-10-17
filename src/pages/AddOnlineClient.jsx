@@ -23,16 +23,32 @@ export default function AddOnlineClient() {
       [e.target.name]: e.target.value,
     });
   }
+  function generatePassword() {
+    return Math.random().toString(36).slice(-8);
+  }
 
   async function handleSave() {
     try {
       setSaving(true);
-
-      await addOnlineClient(form);
-
-      alert("✅ Online client added successfully!");
-
+  
+      const password = generatePassword();
+  
+      await addOnlineClient({
+        ...form,
+        password,
+        type: "online",
+      });
+  
+      alert(
+        `✅ Online client added!
+  
+  Email: ${form.email}
+  
+  Password: ${password}`
+      );
+  
       navigate("/online-clients");
+  
     } catch (err) {
       console.error(err);
       alert(err.message);

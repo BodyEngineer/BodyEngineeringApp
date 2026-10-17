@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { LogIn, LogOut } from 'lucide-react'
+import { LogIn, LogOut, QrCode } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import Header from '../components/Header'
 import AttendanceTable from '../components/AttendanceTable'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -21,6 +22,7 @@ export default function Attendance() {
   const [actionLoading, setActionLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showQR, setShowQR] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -34,6 +36,7 @@ export default function Attendance() {
       supabase
         .from('members')
         .select('*')
+        .eq('owner_id', user.id)
         .order('full_name'),
       supabase
         .from('attendance')
@@ -162,6 +165,36 @@ export default function Attendance() {
             Check Out
           </Button>
         </div>
+
+        <div className="attendance-qr-action">
+  <Button
+    variant="secondary"
+    onClick={() => setShowQR(!showQR)}
+  >
+    <QrCode size={18} />
+    {showQR ? 'Hide QR Code' : 'Show QR Code'}
+  </Button>
+</div>
+
+{showQR && (
+  <div className="attendance-qr-card">
+    <h3>Gym Attendance QR</h3>
+
+    <p>
+      Members can scan this QR code to mark their attendance.
+    </p>
+
+    <QRCodeSVG
+      value={`${window.location.origin}/member-attendance`}
+      size={220}
+      level="H"
+    />
+
+    <p className="qr-owner-text">
+      Body Engineering
+    </p>
+  </div>
+)}
       </div>
 
       <section className="dashboard-section">

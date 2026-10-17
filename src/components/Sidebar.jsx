@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+
 import {
   LayoutDashboard,
   Users,
@@ -9,7 +10,9 @@ import {
   LogOut,
   X,
   Globe,
+  Settings,
 } from 'lucide-react'
+
 import Logo from './Logo'
 import { useAuth } from '../context/AuthContext'
 
@@ -35,6 +38,20 @@ const navItems = [
   },
 
   { to: '/alerts', icon: Bell, label: 'Renewal Alerts' },
+
+  {
+    to: '/manage-programs',
+    icon: Settings,
+    label: 'Programs',
+  },
+
+  { to: '/website-management', icon: Settings, label: 'Website Management' },
+
+  {
+    to: '/website-settings',
+    icon: Settings,
+    label: 'Website Settings',
+  },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {

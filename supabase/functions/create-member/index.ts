@@ -20,8 +20,8 @@ serve(async (req) => {
     );
 
     const body = await req.json();
-
     const {
+      type,
       owner_id,
       full_name,
       email,
@@ -31,6 +31,8 @@ serve(async (req) => {
       membership_start,
       membership_end,
       notes,
+      goal,
+      package_type,
     } = body;
 
     // Create Auth user
@@ -44,21 +46,41 @@ serve(async (req) => {
     if (authError) throw authError;
 
     // Insert Member
-    const { error: memberError } = await supabase
-      .from("members")
-      .insert({
-        owner_id,
-        auth_user_id: authData.user.id,
-        full_name,
-        email,
-        phone,
-        membership_type,
-        membership_start,
-        membership_end,
-        notes,
-      });
+    if (type === "online") {
 
-    if (memberError) throw memberError;
+      const { error } = await supabase
+        .from("online_clients")
+        .insert({
+          owner_id,
+          auth_user_id: authData.user.id,
+          full_name,
+          email,
+          phone,
+          goal,
+          package_type,
+        });
+    
+      if (error) throw error;
+    
+    } else {
+    
+      const { error } = await supabase
+        .from("members")
+        .insert({
+          owner_id,
+          auth_user_id: authData.user.id,
+          full_name,
+          email,
+          phone,
+          membership_type,
+          membership_start,
+          membership_end,
+          notes,
+        });
+    
+      if (error) throw error;
+    
+    }
 
     return new Response(
       JSON.stringify({

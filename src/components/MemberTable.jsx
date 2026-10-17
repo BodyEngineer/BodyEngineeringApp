@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Eye, Pencil, Trash2 } from 'lucide-react'
+import { Eye, Pencil, Trash2, RefreshCw } from 'lucide-react'
 import StatusBadge from './StatusBadge'
 import { formatDate, getMembershipStatus } from '../lib/members'
 
-export default function MemberTable({ members, onDelete }) {
+export default function MemberTable({ members, onDelete, onRenew }) {
   if (!members.length) return null
 
   return (
@@ -37,22 +37,41 @@ export default function MemberTable({ members, onDelete }) {
                   <StatusBadge status={status} />
                 </td>
                 <td>
-                  <div className="table-actions">
-                    <Link to={`/members/${member.id}`} className="action-btn" title="View">
-                      <Eye size={16} />
-                    </Link>
-                    <Link to={`/members/${member.id}/edit`} className="action-btn" title="Edit">
-                      <Pencil size={16} />
-                    </Link>
-                    <button
-                      type="button"
-                      className="action-btn action-btn-danger"
-                      title="Delete"
-                      onClick={() => onDelete(member)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                <div className="table-actions">
+  <Link
+    to={`/members/${member.id}`}
+    className="action-btn"
+    title="View"
+  >
+    <Eye size={16} />
+  </Link>
+
+  <Link
+    to={`/members/${member.id}/edit`}
+    className="action-btn"
+    title="Edit"
+  >
+    <Pencil size={16} />
+  </Link>
+
+  <button
+    type="button"
+    className="action-btn"
+    title="Renew Membership"
+    onClick={() => onRenew(member)}
+  >
+    <RefreshCw size={16} />
+  </button>
+
+  <button
+    type="button"
+    className="action-btn action-btn-danger"
+    title="Delete"
+    onClick={() => onDelete(member)}
+  >
+    <Trash2 size={16} />
+  </button>
+</div>
                 </td>
               </tr>
             )

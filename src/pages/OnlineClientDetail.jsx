@@ -19,7 +19,14 @@ export default function OnlineClientDetail() {
         subtitle="Transformation Timeline"
         onMenuClick={openSidebar}
       />
-
+<button
+    className="btn btn-primary"
+    onClick={() =>
+        navigate(`/online-clients/${id}/timeline`)
+    }
+>
+    📈 View Transformation Timeline
+</button>
       <div className="assessment-card">
         <h2>📈 Transformation Timeline</h2>
 
@@ -67,6 +74,7 @@ export default function OnlineClientDetail() {
             </div>
           ))
         )}
+        
       </div>
     </div>
   );

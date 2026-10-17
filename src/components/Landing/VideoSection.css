@@ -1,0 +1,128 @@
+.cinematic-video-section {
+    width: 100%;
+    padding: 30px 5% 70px;
+    background: #080808;
+  }
+  
+  .cinematic-video-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 620px;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 60, 45, 0.25);
+  }
+  
+  .cinematic-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+  }
+  
+  .cinematic-video-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.82) 0%,
+        rgba(0, 0, 0, 0.45) 48%,
+        rgba(0, 0, 0, 0.12) 100%
+      );
+  }
+  
+  .cinematic-video-content {
+    position: relative;
+    z-index: 2;
+    min-height: 520px;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+  }
+  
+  .cinematic-eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #ff4438;
+    margin-bottom: 16px;
+  }
+  
+  .cinematic-video-content h2 {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 72px);
+    line-height: 0.98;
+    font-weight: 900;
+    color: white;
+  }
+  
+  .cinematic-video-content h2 span {
+    color: #ff4438;
+  }
+  
+  .cinematic-video-content p {
+    max-width: 520px;
+    margin-top: 24px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  
+  @media (max-width: 768px) {
+    .cinematic-video-section {
+      padding: 40px 16px;
+    }
+  
+    .cinematic-video-wrap
+     {
+      min-height: 600px;
+    }
+  
+    .cinematic-video-wrap {
+      border-radius: 18px;
+    }
+  
+    .cinematic-video-content {
+      justify-content: flex-end;
+      padding: 32px 24px;
+    }
+  
+    .cinematic-video-overlay {
+      background:
+        linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.3) 70%,
+          rgba(0, 0, 0, 0.15) 100%
+        );
+    }
+  
+    .cinematic-video-content p {
+      font-size: 15px;
+    }
+  }
+
+  .hero-cta-btn{
+    margin-top:24px;
+    padding:14px 28px;
+    background:#ff4438;
+    color:white;
+    border:none;
+    border-radius:12px;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+  }
+  
+  .hero-cta-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(255,68,56,0.35);
+  }

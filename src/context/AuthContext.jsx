@@ -27,18 +27,43 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signIn = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+    if (error) throw error
+    return data
+  }
+
+  const resetPassword = async (email) => {
+    const { data, error } =
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+
     if (error) throw error
     return data
   }
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
+
     if (error) throw error
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        signIn,
+        signOut,
+        resetPassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
@@ -46,8 +71,10 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
+
   if (!context) {
     throw new Error('useAuth must be used within AuthProvider')
   }
+
   return context
 }

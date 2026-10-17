@@ -1,0 +1,209 @@
+.hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+  }
+  
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+  
+    background:
+      linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.80)),
+      url("/hero.png");
+  
+    background-size: cover;
+    background-position: center;
+  
+    transform: scale(1.05);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    padding: 30px;
+  }
+  
+  .hero-logo{
+    width:140px;
+    margin-bottom:20px;
+  }
+  
+  .hero-title{
+    font-size:72px;
+    font-weight:800;
+    letter-spacing:4px;
+  }
+  
+  .hero-subtitle{
+    color:#ff4d4d;
+    margin-top:10px;
+    font-size:26px;
+  }
+  
+  .hero-tagline{
+    margin-top:25px;
+    font-size:22px;
+    line-height:1.8;
+    opacity:.9;
+  }
+  
+  .hero-buttons{
+    margin-top:45px;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  
+  .primary-btn,
+  .secondary-btn{
+  
+    padding:18px 34px;
+  
+    border:none;
+  
+    border-radius:50px;
+  
+    cursor:pointer;
+  
+    font-size:18px;
+  
+    font-weight:700;
+  
+    transition:.35s;
+  }
+  
+  .primary-btn{
+  
+    background:#ff4d4d;
+  
+    color:white;
+  }
+  
+  .primary-btn:hover{
+  
+    transform:translateY(-4px);
+  }
+  
+  .secondary-btn{
+  
+    background:white;
+  
+    color:#111;
+  }
+  
+  .hero-stats{
+  
+    display:flex;
+  
+    justify-content:center;
+  
+    gap:60px;
+  
+    margin-top:70px;
+  
+    flex-wrap:wrap;
+  }
+  
+  .hero-stats h2{
+  
+    font-size:42px;
+  
+    color:#ff4d4d;
+  }
+  
+  .hero-stats p{
+  
+    opacity:.8;
+  }
+  
+  .scroll-down{
+  
+    margin-top:70px;
+  
+    font-size:34px;
+  
+    animation:bounce 1.8s infinite;
+  }
+  
+  @keyframes bounce{
+  
+    0%,100%{
+  
+      transform:translateY(0);
+    }
+  
+    50%{
+  
+      transform:translateY(12px);
+    }
+  }
+
+  /* Hero Background */
+.hero-section {
+    min-height: 100vh;
+    background:
+      linear-gradient(
+        rgba(0,0,0,.72),
+        rgba(0,0,0,.82)
+      ),
+      url("/hero.jpg");
+  
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Main Heading */
+.hero-title {
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  /* Highlight ENGINEERING */
+.hero-title span {
+    color: #ff3b30;
+  }
+
+  .coach-card{
+    position:absolute;
+    bottom:20px;
+    right:-30px;
+
+    background:#111;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+
+.coach-card h4{
+    color:#fff;
+    font-size:22px;
+    margin:0;
+}
+
+.coach-card p{
+    color:#ff3b30;
+    margin-top:5px;
+    font-size:14px;
+}
