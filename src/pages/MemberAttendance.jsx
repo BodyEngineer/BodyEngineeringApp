@@ -172,18 +172,27 @@ export default function MemberAttendance() {
        * attendance QR before allowing attendance.
        */
 
-      const expectedUrl =
-      `${window.location.origin}/member-attendance`;
-    
-    console.log("QR VALUE:", qrValue);
-    console.log("EXPECTED:", expectedUrl);
-    
-    if (qrValue.trim() !== expectedUrl.trim()) {
-      setError(
-        "❌ Invalid QR code. Please scan the attendance QR displayed by the gym."
-      );
-      return;
-    }
+      const scannedUrl = qrValue.trim();
+
+console.log("QR VALUE:", scannedUrl);
+
+try {
+  const url = new URL(scannedUrl);
+
+  if (url.pathname !== "/member-attendance") {
+    setError(
+      "❌ Invalid QR code. Please scan the attendance QR displayed by the gym."
+    );
+    return;
+  }
+} catch (err) {
+  console.error("QR URL error:", err);
+
+  setError(
+    "❌ Invalid QR code. Please scan the attendance QR displayed by the gym."
+  );
+  return;
+}
 
       /*
        * Check if member is already checked in.
