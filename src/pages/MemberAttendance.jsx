@@ -79,8 +79,8 @@ export default function MemberAttendance() {
     try {
       setScanning(true);
   
-      // Wait for the scanner container to appear in the DOM
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Give React time to render the scanner container
+      await new Promise((resolve) => setTimeout(resolve, 300));
   
       const scanner = new Html5Qrcode("attendance-qr-reader");
   
@@ -88,14 +88,21 @@ export default function MemberAttendance() {
   
       await scanner.start(
         { facingMode: "environment" },
+  
         {
           fps: 15,
-          aspectRatio: 1.777778,
+  
+          // IMPORTANT:
+          // No qrbox.
+          // The entire camera view can now detect the QR.
           disableFlip: false,
         },
   
         async (decodedText) => {
           console.log("QR SCANNED:", decodedText);
+  
+          // Prevent multiple detections
+          if (!scannerRef.current) return;
   
           setMessage("QR detected. Verifying...");
   
@@ -105,13 +112,11 @@ export default function MemberAttendance() {
         },
   
         (errorMessage) => {
-          // Normal QR detection errors are ignored.
-          // Scanner continues looking for the QR.
+          // Normal scanning errors are ignored.
         }
       );
   
       console.log("Camera scanner started successfully");
-  
     } catch (err) {
       console.error("CAMERA ERROR:", err);
   

@@ -186,8 +186,9 @@ export default function Attendance() {
 
     <QRCodeSVG
   value="https://body-engineering-app.vercel.app/member-attendance"
-  size={220}
+  size={280}
   level="M"
+  includeMargin={true}
 />
 
     <p className="qr-owner-text">
