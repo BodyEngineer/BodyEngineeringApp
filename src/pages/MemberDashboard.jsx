@@ -360,6 +360,25 @@ const showRenewalCard = true;
       />
     </div>
 
+    <div className="quick-card">
+
+  <div className="quick-icon">📷</div>
+
+  <h3>Mark Attendance</h3>
+
+  <p>
+    Scan the gym QR code to check in
+  </p>
+
+  <button
+    className="view-btn"
+    onClick={() => navigate("/member-attendance")}
+  >
+    📱 Scan Attendance QR →
+  </button>
+
+</div>
+
     <div>
 
       <p className="hero-brand">
@@ -723,24 +742,7 @@ const showRenewalCard = true;
   </div>
 )}
 
-<div className="quick-card">
 
-  <div className="quick-icon">📷</div>
-
-  <h3>Mark Attendance</h3>
-
-  <p>
-    Scan the gym QR code to check in
-  </p>
-
-  <button
-    className="view-btn"
-    onClick={() => navigate("/member-attendance")}
-  >
-    📱 Scan Attendance QR →
-  </button>
-
-</div>
 
       <div className="assessment-card">
 
