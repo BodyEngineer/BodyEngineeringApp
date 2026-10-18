@@ -185,10 +185,10 @@ export default function Attendance() {
     </p>
 
     <QRCodeSVG
-      value={`${window.location.origin}/member-attendance`}
-      size={260}
-      level="M"
-    />
+  value="https://body-engineering-app.vercel.app/member-attendance"
+  size={220}
+  level="M"
+/>
 
     <p className="qr-owner-text">
       Body Engineering

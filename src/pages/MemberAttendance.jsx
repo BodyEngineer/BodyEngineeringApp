@@ -89,13 +89,13 @@ export default function MemberAttendance() {
       await scanner.start(
         { facingMode: "environment" },
         {
-          fps: 10,
+          fps: 20,
   
           qrbox: (viewfinderWidth, viewfinderHeight) => {
             const size = Math.min(
               viewfinderWidth,
               viewfinderHeight,
-              280
+              250
             );
   
             return {
@@ -160,44 +160,67 @@ export default function MemberAttendance() {
 
   async function verifyQRCode(qrValue) {
     if (!member) return;
-
+  
     try {
       setError("");
       setMessage("");
-
+  
+      const scannedValue = qrValue.trim();
+  
+      console.log("=================================");
+      console.log("QR VALUE SCANNED:", scannedValue);
+      console.log("=================================");
+  
+      let scannedUrl;
+  
+      try {
+        scannedUrl = new URL(scannedValue);
+      } catch (err) {
+        console.error("QR is not a valid URL:", scannedValue);
+  
+        setError(
+          `❌ Invalid QR format.\nScanned: ${scannedValue}`
+        );
+  
+        return;
+      }
+  
+      console.log("QR HOST:", scannedUrl.hostname);
+      console.log("QR PATH:", scannedUrl.pathname);
+  
       /*
-       * The owner's QR currently contains the member-attendance URL.
+       * Normalize the path.
        *
-       * We verify that the scanned QR is actually the gym
-       * attendance QR before allowing attendance.
+       * These will all be accepted:
+       *
+       * /member-attendance
+       * /member-attendance/
+       * /member-attendance?anything
        */
-
-      const scannedUrl = qrValue.trim();
-
-console.log("QR VALUE:", scannedUrl);
-
-try {
-  const url = new URL(scannedUrl);
-
-  if (url.pathname !== "/member-attendance") {
-    setError(
-      "❌ Invalid QR code. Please scan the attendance QR displayed by the gym."
-    );
-    return;
-  }
-} catch (err) {
-  console.error("QR URL error:", err);
-
-  setError(
-    "❌ Invalid QR code. Please scan the attendance QR displayed by the gym."
-  );
-  return;
-}
-
+  
+      const scannedPath =
+        scannedUrl.pathname.replace(/\/+$/, "");
+  
+      const expectedPath = "/member-attendance";
+  
+      if (scannedPath !== expectedPath) {
+        setError(
+          `❌ Invalid QR code.\nScanned path: ${scannedUrl.pathname}`
+        );
+  
+        return;
+      }
+  
+      /*
+       * QR is valid.
+       */
+  
+      setMessage("✅ QR detected. Recording attendance...");
+  
       /*
        * Check if member is already checked in.
        */
-
+  
       const { data: existingSession, error: existingError } =
         await supabase
           .from("attendance")
@@ -207,21 +230,20 @@ try {
           .order("check_in", { ascending: false })
           .limit(1)
           .maybeSingle();
-
+  
       if (existingError) {
         throw existingError;
       }
-
+  
       if (existingSession) {
         setMessage("✅ You are already checked in.");
         return;
       }
-
+  
       /*
-       * Create attendance record only after
-       * successful QR verification.
+       * Create attendance record.
        */
-
+  
       const { error: insertError } =
         await supabase
           .from("attendance")
@@ -230,17 +252,18 @@ try {
             member_id: member.id,
             check_in: new Date().toISOString(),
           });
-
+  
       if (insertError) {
         throw insertError;
       }
-
+  
       setMessage(
         "✅ Attendance recorded successfully!"
       );
+  
     } catch (err) {
       console.error("QR attendance error:", err);
-
+  
       setError(
         err.message ||
           "Unable to record attendance."
