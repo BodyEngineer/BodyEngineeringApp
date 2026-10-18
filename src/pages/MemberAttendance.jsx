@@ -80,49 +80,33 @@ export default function MemberAttendance() {
   
     setTimeout(async () => {
       try {
-        const readerElement =
-          document.getElementById("attendance-qr-reader");
-  
-        if (!readerElement) {
-          throw new Error("Scanner area could not be created.");
-        }
-  
         const scanner = new Html5Qrcode("attendance-qr-reader");
   
         scannerRef.current = scanner;
   
-        // Ask for the rear camera explicitly
-        const cameras = await Html5Qrcode.getCameras();
-  
-        if (!cameras || cameras.length === 0) {
-          throw new Error("No camera was found on this device.");
-        }
-  
-        const backCamera =
-          cameras.find((camera) =>
-            /back|rear|environment/i.test(camera.label)
-          ) || cameras[cameras.length - 1];
-  
         await scanner.start(
-          backCamera.id,
+          { facingMode: "environment" },
           {
-            fps: 10,
+            fps: 15,
             qrbox: {
-              width: 250,
-              height: 250,
+              width: 280,
+              height: 280,
             },
-            aspectRatio: 1,
+            aspectRatio: 1.0,
+            disableFlip: false,
           },
           async (decodedText) => {
             console.log("QR scanned:", decodedText);
   
-            // Stop camera immediately after successful scan
+            // Stop scanner immediately after successful scan
             await stopScanner();
   
+            // Verify the QR
             await verifyQRCode(decodedText);
           },
-          () => {
-            // Normal QR scanning failures are ignored
+          (errorMessage) => {
+            // Normal scanning errors are ignored.
+            // The scanner keeps looking for the QR.
           }
         );
       } catch (err) {
