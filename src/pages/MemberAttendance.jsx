@@ -85,28 +85,41 @@ export default function MemberAttendance() {
         scannerRef.current = scanner;
   
         await scanner.start(
-          { facingMode: "environment" },
+          { facingMode: { ideal: "environment" } },
           {
-            fps: 15,
-            qrbox: {
-              width: 280,
-              height: 280,
+            fps: 10,
+  
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+              const size = Math.min(
+                viewfinderWidth,
+                viewfinderHeight,
+                320
+              );
+  
+              return {
+                width: size,
+                height: size,
+              };
             },
+  
             aspectRatio: 1.0,
             disableFlip: false,
           },
+  
           async (decodedText) => {
             console.log("QR scanned:", decodedText);
   
-            // Stop scanner immediately after successful scan
+            // IMPORTANT: show us immediately that QR detection worked
+            setMessage("QR detected. Verifying...");
+  
             await stopScanner();
   
-            // Verify the QR
             await verifyQRCode(decodedText);
           },
+  
           (errorMessage) => {
             // Normal scanning errors are ignored.
-            // The scanner keeps looking for the QR.
+            // The scanner continues looking for the QR.
           }
         );
       } catch (err) {
