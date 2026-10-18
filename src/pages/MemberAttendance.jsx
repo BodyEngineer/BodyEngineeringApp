@@ -227,7 +227,38 @@ export default function MemberAttendance() {
       }
   
       if (existingSession) {
-        setMessage("✅ You are already checked in.");
+        const checkOutTime = new Date().toISOString();
+      
+        const { error: checkoutError } = await supabase
+          .from("attendance")
+          .update({
+            check_out: checkOutTime,
+          })
+          .eq("id", existingSession.id);
+      
+        if (checkoutError) {
+          throw checkoutError;
+        }
+      
+        const checkInTime = new Date(existingSession.check_in);
+        const checkOut = new Date(checkOutTime);
+      
+        const durationMinutes = Math.floor(
+          (checkOut - checkInTime) / 60000
+        );
+      
+        const hours = Math.floor(durationMinutes / 60);
+        const minutes = durationMinutes % 60;
+      
+        const durationText =
+          hours > 0
+            ? `${hours}h ${minutes}m`
+            : `${minutes}m`;
+      
+        setMessage(
+          `✅ Check-out successful! Gym duration: ${durationText}`
+        );
+      
         return;
       }
   
