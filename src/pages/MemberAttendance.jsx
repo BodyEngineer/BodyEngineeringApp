@@ -76,63 +76,67 @@ export default function MemberAttendance() {
   
     if (!member) return;
   
-    setScanning(true);
+    try {
+      setScanning(true);
   
-    setTimeout(async () => {
-      try {
-        const scanner = new Html5Qrcode("attendance-qr-reader");
+      // Wait for the scanner container to appear in the DOM
+      await new Promise((resolve) => setTimeout(resolve, 500));
   
-        scannerRef.current = scanner;
+      const scanner = new Html5Qrcode("attendance-qr-reader");
   
-        await scanner.start(
-          { facingMode: { ideal: "environment" } },
-          {
-            fps: 10,
+      scannerRef.current = scanner;
   
-            qrbox: (viewfinderWidth, viewfinderHeight) => {
-              const size = Math.min(
-                viewfinderWidth,
-                viewfinderHeight,
-                320
-              );
+      await scanner.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
   
-              return {
-                width: size,
-                height: size,
-              };
-            },
+          qrbox: (viewfinderWidth, viewfinderHeight) => {
+            const size = Math.min(
+              viewfinderWidth,
+              viewfinderHeight,
+              280
+            );
   
-            aspectRatio: 1.0,
-            disableFlip: false,
+            return {
+              width: size,
+              height: size,
+            };
           },
   
-          async (decodedText) => {
-            console.log("QR scanned:", decodedText);
+          aspectRatio: 1.0,
+          disableFlip: false,
+        },
   
-            // IMPORTANT: show us immediately that QR detection worked
-            setMessage("QR detected. Verifying...");
+        async (decodedText) => {
+          console.log("QR SCANNED:", decodedText);
   
-            await stopScanner();
+          setMessage("QR detected. Verifying...");
   
-            await verifyQRCode(decodedText);
-          },
+          await stopScanner();
   
-          (errorMessage) => {
-            // Normal scanning errors are ignored.
-            // The scanner continues looking for the QR.
-          }
-        );
-      } catch (err) {
-        console.error("Camera error:", err);
+          await verifyQRCode(decodedText);
+        },
   
-        setScanning(false);
+        (errorMessage) => {
+          // Normal QR detection errors are ignored.
+          // Scanner continues looking for the QR.
+        }
+      );
   
-        setError(
-          err.message ||
-            "Unable to open the camera. Please allow camera access and try again."
-        );
-      }
-    }, 300);
+      console.log("Camera scanner started successfully");
+  
+    } catch (err) {
+      console.error("CAMERA ERROR:", err);
+  
+      setScanning(false);
+  
+      setError(
+        `${err.name || "CameraError"}: ${
+          err.message || "Unable to open camera."
+        }`
+      );
+    }
   }
 
   async function stopScanner() {
@@ -169,7 +173,7 @@ export default function MemberAttendance() {
        */
 
       const expectedUrl =
-        `${window.location.origin}/member-dashboard/attendance`;
+  `${window.location.origin}/member-attendance`;
 
       if (qrValue !== expectedUrl) {
         setError(
