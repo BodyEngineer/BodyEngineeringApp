@@ -186,8 +186,8 @@ export default function Attendance() {
 
     <QRCodeSVG
       value={`${window.location.origin}/member-attendance`}
-      size={220}
-      level="H"
+      size={260}
+      level="M"
     />
 
     <p className="qr-owner-text">
