@@ -89,22 +89,8 @@ export default function MemberAttendance() {
       await scanner.start(
         { facingMode: "environment" },
         {
-          fps: 20,
-  
-          qrbox: (viewfinderWidth, viewfinderHeight) => {
-            const size = Math.min(
-              viewfinderWidth,
-              viewfinderHeight,
-              250
-            );
-  
-            return {
-              width: size,
-              height: size,
-            };
-          },
-  
-          aspectRatio: 1.0,
+          fps: 15,
+          aspectRatio: 1.777778,
           disableFlip: false,
         },
   
@@ -363,15 +349,16 @@ export default function MemberAttendance() {
                 </button>
               ) : (
                 <>
-                  <div
-                    id="attendance-qr-reader"
-                    style={{
-                      width: "100%",
-                      marginTop: "25px",
-                      borderRadius: "15px",
-                      overflow: "hidden",
-                    }}
-                  />
+               <div
+  id="attendance-qr-reader"
+  style={{
+    width: "100%",
+    marginTop: "25px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    background: "#000",
+  }}
+/>
 
                   <button
                     type="button"
