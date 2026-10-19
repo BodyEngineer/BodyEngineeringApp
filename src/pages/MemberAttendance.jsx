@@ -229,25 +229,64 @@ export default function MemberAttendance() {
       if (existingSession) {
         const checkOutTime = new Date().toISOString();
       
-        const { error: checkoutError } = await supabase
-          .from("attendance")
-          .update({
-            check_out: checkOutTime,
-          })
-          .eq("id", existingSession.id);
+        console.log("CHECKING OUT SESSION:", existingSession.id);
+      
+        const { data: updatedSession, error: checkoutError } =
+          await supabase
+            .from("attendance")
+            .update({
+              check_out: checkOutTime,
+            })
+            .eq("id", existingSession.id)
+            .select()
+            .maybeSingle();
       
         if (checkoutError) {
+          console.error("CHECKOUT UPDATE ERROR:", checkoutError);
           throw checkoutError;
         }
       
-        const checkInTime = new Date(existingSession.check_in);
-        const checkOut = new Date(checkOutTime);
+        /*
+         * VERY IMPORTANT:
+         * If Supabase returns no updated row,
+         * the database was NOT actually changed.
+         */
+        if (!updatedSession) {
+          console.error(
+            "CHECKOUT FAILED: No attendance row was updated."
+          );
+      
+          throw new Error(
+            "Check-out could not be saved. Please try again or contact the gym."
+          );
+        }
+      
+        console.log(
+          "CHECKOUT SAVED SUCCESSFULLY:",
+          updatedSession
+        );
+      
+        /*
+         * Calculate duration using the actual
+         * database-updated check_out time.
+         */
+      
+        const checkInTime = new Date(
+          existingSession.check_in
+        );
+      
+        const checkOut = new Date(
+          updatedSession.check_out
+        );
       
         const durationMinutes = Math.floor(
           (checkOut - checkInTime) / 60000
         );
       
-        const hours = Math.floor(durationMinutes / 60);
+        const hours = Math.floor(
+          durationMinutes / 60
+        );
+      
         const minutes = durationMinutes % 60;
       
         const durationText =

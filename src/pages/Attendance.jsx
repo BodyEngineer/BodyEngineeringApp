@@ -140,12 +140,13 @@ export default function Attendance() {
 
   const handleCheckOut = async () => {
     if (!selectedMember || !user) return
-
+  
     setActionLoading(true)
     setError('')
     setSuccess('')
-
+  
     try {
+      // Find the member's active/open attendance session
       const { data: existingSession, error: sessionError } =
         await supabase
           .from('attendance')
@@ -153,86 +154,74 @@ export default function Attendance() {
           .eq('owner_id', user.id)
           .eq('member_id', selectedMember)
           .is('check_out', null)
-          .order('check_in', {
-            ascending: false,
-          })
+          .order('check_in', { ascending: false })
           .limit(1)
           .maybeSingle()
-
+  
       if (sessionError) {
         throw sessionError
       }
-
+  
       if (!existingSession) {
-        setError(
-          'No active check-in found for this member.'
-        )
+        setError('No active check-in found for this member.')
         return
       }
-
+  
+      // Check out now
       const checkOutTime = new Date().toISOString()
-
-      const { error: checkoutError } =
+  
+      const { data: updatedRecord, error: checkoutError } =
         await supabase
           .from('attendance')
           .update({
             check_out: checkOutTime,
           })
           .eq('id', existingSession.id)
-
+          .eq('owner_id', user.id)
+          .select()
+          .single()
+  
       if (checkoutError) {
         throw checkoutError
       }
-
-      const checkInTime = new Date(
-        existingSession.check_in
+  
+      console.log('CHECKOUT UPDATED:', updatedRecord)
+  
+      // Calculate duration
+      const checkInTime = new Date(existingSession.check_in)
+      const checkOut = new Date(checkOutTime)
+  
+      const durationMinutes = Math.floor(
+        (checkOut - checkInTime) / 60000
       )
-
-      const checkOut = new Date(
-        checkOutTime
-      )
-
-      const durationMinutes = Math.max(
-        0,
-        Math.floor(
-          (checkOut - checkInTime) / 60000
-        )
-      )
-
-      const hours = Math.floor(
-        durationMinutes / 60
-      )
-
-      const minutes =
-        durationMinutes % 60
-
+  
+      const hours = Math.floor(durationMinutes / 60)
+      const minutes = durationMinutes % 60
+  
       const durationText =
         hours > 0
           ? `${hours}h ${minutes}m`
           : `${minutes}m`
-
+  
       setSuccess(
-        `Check-out successful. Gym duration: ${durationText}`
+        `Check-out successful! Gym duration: ${durationText}`
       )
-
+  
       setSelectedMember('')
-
+  
+      // IMPORTANT: reload owner dashboard data from Supabase
       await fetchData()
+  
     } catch (err) {
-      console.error(
-        'Owner checkout error:',
-        err
-      )
-
+      console.error('CHECKOUT ERROR:', err)
+  
       setError(
-        err.message ||
-          'Unable to record check-out.'
+        err.message || 'Unable to record check-out.'
       )
     } finally {
       setActionLoading(false)
     }
   }
-
   // ---------------------------------------
   // UI
   // ---------------------------------------
