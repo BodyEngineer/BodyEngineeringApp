@@ -92,42 +92,41 @@ export default function Attendance() {
     setActionLoading(false)
   }
 
-  const handleCheckOut = async () => {
-    if (!selectedMember || !user) return
-    setActionLoading(true)
-    setError('')
-    setSuccess('')
-
-    const { data: openSession } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('member_id', selectedMember)
-      .is('check_out', null)
-      .order('check_in', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (!openSession) {
-      setError('No active check-in found for this member')
-      setActionLoading(false)
-      return
+  if (existingSession) {
+    const checkOutTime = new Date().toISOString();
+  
+    const { error: checkoutError } = await supabase
+      .from("attendance")
+      .update({
+        check_out: checkOutTime,
+      })
+      .eq("id", existingSession.id);
+  
+    if (checkoutError) {
+      throw checkoutError;
     }
-
-    const { error: updateError } = await supabase
-      .from('attendance')
-      .update({ check_out: new Date().toISOString() })
-      .eq('id', openSession.id)
-
-    if (updateError) {
-      setError(updateError.message)
-    } else {
-      setSuccess('Check-out recorded successfully')
-      setSelectedMember('')
-      fetchData()
-    }
-    setActionLoading(false)
+  
+    const checkInTime = new Date(existingSession.check_in);
+    const checkOut = new Date(checkOutTime);
+  
+    const durationMinutes = Math.floor(
+      (checkOut - checkInTime) / 60000
+    );
+  
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+  
+    const durationText =
+      hours > 0
+        ? `${hours}h ${minutes}m`
+        : `${minutes}m`;
+  
+    setMessage(
+      `✅ Check-out successful! Gym duration: ${durationText}`
+    );
+  
+    return;
   }
-
   return (
     <div className="page">
       <Header
