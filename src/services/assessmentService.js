@@ -16,8 +16,11 @@ export async function addAssessment(values) {
   const { data, error } = await supabase
     .from("online_member_assessments")
     .insert(values)
-    .select()
+    .select("*")
     .single();
+
+  console.log("ADD ASSESSMENT RAW DATA:", data);
+  console.log("ADD ASSESSMENT RAW ERROR:", error);
 
   if (error) throw error;
 
@@ -25,12 +28,17 @@ export async function addAssessment(values) {
 }
 
 export async function updateAssessment(id, values) {
+  console.log("UPDATE ASSESSMENT ID:", id);
+  console.log("UPDATE VALUES:", values);
+
   const { data, error } = await supabase
     .from("online_member_assessments")
     .update(values)
     .eq("id", id)
-    .select()
-    .single();
+    .select("*");
+
+  console.log("UPDATE RAW DATA:", data);
+  console.log("UPDATE RAW ERROR:", error);
 
   if (error) throw error;
 

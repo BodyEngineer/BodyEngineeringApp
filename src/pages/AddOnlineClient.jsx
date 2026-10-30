@@ -30,28 +30,32 @@ export default function AddOnlineClient() {
   async function handleSave() {
     try {
       setSaving(true);
-  
+
       const password = generatePassword();
-  
+
       await addOnlineClient({
         ...form,
         password,
         type: "online",
       });
-  
+
       alert(
         `✅ Online client added!
-  
+
   Email: ${form.email}
-  
+
   Password: ${password}`
       );
-  
+
       navigate("/online-clients");
-  
+
     } catch (err) {
-      console.error(err);
-      alert(err.message);
+      console.error("Add online client error:", err);
+
+      alert(
+        err.message ||
+          "Unable to add online client. Please try again."
+      );
     } finally {
       setSaving(false);
     }

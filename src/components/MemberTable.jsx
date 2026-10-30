@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Eye, Pencil, Trash2, RefreshCw } from 'lucide-react'
+import { Eye, Pencil, Trash2, RefreshCw, Utensils } from 'lucide-react'
 import StatusBadge from './StatusBadge'
 import { formatDate, getMembershipStatus } from '../lib/members'
 
@@ -53,6 +53,14 @@ export default function MemberTable({ members, onDelete, onRenew }) {
   >
     <Pencil size={16} />
   </Link>
+
+  <Link
+  to={`/members/${member.id}/diet-plan`}
+  className="action-btn"
+  title="Diet Plan"
+>
+  <Utensils size={16} />
+</Link>
 
   <button
     type="button"

@@ -8,6 +8,7 @@ export default function MemberDashboard() {
   const [memberType, setMemberType] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [checkedInToday, setCheckedInToday] = useState(false);
+  const [showAttendanceHistory, setShowAttendanceHistory] = useState(false);
   const [assessment, setAssessment] = useState(null);
   const [websiteSettings, setWebsiteSettings] = useState(null);
   const [qrImageUrl, setQrImageUrl] = useState("");
@@ -33,77 +34,77 @@ const [renewalPeriod, setRenewalPeriod] = useState("monthly");
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
-  
+
     if (userError) {
       console.log("User error:", userError);
       return;
     }
-  
+
     if (!user) {
       navigate("/member-login");
       return;
     }
 
-   
-  
+
+
     // =========================
     // FIND GYM MEMBER
     // =========================
-  
+
     async function loadGymMember(userId) {
       const { data, error } = await supabase
         .from("members")
         .select("*")
         .eq("auth_user_id", userId)
         .maybeSingle();
-  
+
       if (error) {
         console.log("Gym member error:", error);
         return null;
       }
-  
+
       if (data) {
         setMemberType("gym");
       }
       return data;
     }
-  
+
     // =========================
     // FIND ONLINE CLIENT
     // =========================
-  
+
     async function loadOnlineClient(userId) {
       const { data, error } = await supabase
         .from("online_clients")
         .select("*")
         .eq("auth_user_id", userId)
         .maybeSingle();
-  
+
       if (error) {
         console.log("Online client error:", error);
         return null;
       }
-  
+
       if (data) {
         setMemberType("online");
       }
-  
+
       return data;
     }
-  
+
     // First check gym members
     let memberData = await loadGymMember(user.id);
-  
+
     // If not gym member, check online clients
     if (!memberData) {
       memberData = await loadOnlineClient(user.id);
     }
-  
+
     if (!memberData) {
       console.log("No member found for logged-in user.");
       return;
     }
-  
+
     setMember(memberData);
 
 // LOAD WEBSITE SETTINGS + QR
@@ -132,12 +133,12 @@ console.error("QR image error:", qrError);
 } else {
 setQrImageUrl(qrData?.signedUrl || "");
 }
-  
+
     // =========================
     // ATTENDANCE
     // Only relevant for gym members
     // =========================
-  
+
     if (memberData && memberData.membership_end) {
       const {
         data: attendanceData,
@@ -147,28 +148,28 @@ setQrImageUrl(qrData?.signedUrl || "");
         .select("*")
         .eq("member_id", memberData.id)
         .order("check_in", { ascending: false });
-  
+
       if (attendanceError) {
         console.log("Attendance error:", attendanceError);
       } else {
         setAttendance(attendanceData || []);
-  
+
         const today = new Date().toDateString();
-  
+
         const checkedToday =
           attendanceData?.some(
             (item) =>
               new Date(item.check_in).toDateString() === today
           ) || false;
-  
+
         setCheckedInToday(checkedToday);
       }
     }
-  
+
     // =========================
     // LATEST BODY ASSESSMENT
     // =========================
-  
+
     const {
       data: latestAssessment,
       error: assessmentError,
@@ -179,7 +180,7 @@ setQrImageUrl(qrData?.signedUrl || "");
       .order("assessment_date", { ascending: false })
       .limit(1)
       .maybeSingle();
-  
+
     if (assessmentError) {
       console.log("Assessment error:", assessmentError);
     } else {
@@ -249,7 +250,7 @@ const handlePaymentSubmit = async () => {
       );
     }
 
-  
+
 
     // -------------------------
     // CREATE PAYMENT REQUEST
@@ -262,13 +263,13 @@ const handlePaymentSubmit = async () => {
       payment_date: new Date().toISOString().split("T")[0],
       renewal_period: renewalPeriod,
     };
-    
+
     if (memberType === "online") {
       paymentData.online_client_id = member.id;
     } else {
       paymentData.member_id = member.id;
     }
-    
+
     const { data: requestData, error: requestError } =
       await supabase
         .from("payment_requests")
@@ -360,29 +361,10 @@ const showRenewalCard = true;
       />
     </div>
 
-    <div className="quick-card">
-
-  <div className="quick-icon">📷</div>
-
-  <h3>Mark Attendance</h3>
-
-  <p>
-    Scan the gym QR code to check in
-  </p>
-
-  <button
-    className="view-btn"
-    onClick={() => navigate("/member-attendance")}
-  >
-    📱 Scan Attendance QR →
-  </button>
-
-</div>
-
     <div>
 
       <p className="hero-brand">
-        BODY ENGINEERING 
+        BODY ENGINEERING
         Female Fitness Studio
       </p>
 
@@ -396,7 +378,7 @@ const showRenewalCard = true;
       <p className="hero-message">
         💪 Every workout makes you stronger.
       </p>
-       
+
       <p className="hero-quote">
         "The Body Achieves What Mind Believes".
       </p>
@@ -443,6 +425,58 @@ const showRenewalCard = true;
     </button>
 
   </div>
+
+</div>
+
+{/* ATTENDANCE CTA */}
+
+<div className="attendance-cta">
+
+  <div className="attendance-cta-left">
+
+    <div className="attendance-qr-icon">
+      📱
+    </div>
+
+    <div>
+      <span className="attendance-label">
+        DAILY ATTENDANCE
+      </span>
+
+      <h2>
+        {checkedInToday
+          ? "You're checked in today! 🎉"
+          : "Mark Today's Attendance"}
+      </h2>
+
+      <p>
+        {checkedInToday
+          ? "Great job! Keep your consistency going."
+          : "Scan the gym QR code to record your workout visit."}
+      </p>
+    </div>
+
+  </div>
+
+  <button
+  className="attendance-btn"
+  onClick={() => {
+    if (checkedInToday) {
+      document
+        .getElementById("attendance-history")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    } else {
+      navigate("/member-attendance");
+    }
+  }}
+>
+  {checkedInToday
+    ? "View Attendance →"
+    : "📷 Scan QR Code →"}
+</button>
 
 </div>
 
@@ -517,7 +551,7 @@ const showRenewalCard = true;
     onChange={(e) => setRenewalPeriod(e.target.value)}
     disabled={
       paymentSubmitting ||
-      paymentRequest?.status === "pending"  
+      paymentRequest?.status === "pending"
     }
     style={{
       width: "100%",
@@ -798,66 +832,336 @@ const showRenewalCard = true;
 </div>
   {/* QUICK ACCESS */}
 
-<div className="quick-grid">
+{/* =========================
+    MY COACHING
+========================= */}
 
-<div className="quick-card">
+<section className="coaching-section">
 
-  <div className="quick-icon">📅</div>
+  <div className="coaching-section-header">
 
-  <h3>Attendance</h3>
+    <div>
+      <p className="coaching-eyebrow">
+        PERSONALIZED COACHING
+      </p>
 
-  <h1>{totalVisits}</h1>
+      <h2>
+        🏆 My Coaching
+      </h2>
 
-  <p>Total Visits</p>
+      <p className="coaching-subtitle">
+        Your personalised plans, attendance, progress and transformation journey.
+      </p>
+    </div>
 
-  <span
-    className={
-      checkedInToday
-        ? "status-present"
-        : "status-absent"
-    }
+  </div>
+
+
+  <div className="coaching-grid">
+
+    {/* =========================
+        WORKOUT PLAN
+    ========================= */}
+
+    <div
+      className="coaching-card"
+      onClick={() =>
+        navigate("/member-dashboard/workout-plan")
+      }
+    >
+
+      <div className="coaching-card-top">
+
+        <div className="coaching-card-icon">
+          🏋️
+        </div>
+
+        <span className="coaching-card-badge">
+          TRAINING
+        </span>
+
+      </div>
+
+      <div className="coaching-card-content">
+
+        <h3>
+          Workout Plan
+        </h3>
+
+        <p>
+          View your weekly workout schedule, exercises and
+          training programme designed by your coach.
+        </p>
+
+        <div className="coaching-card-link">
+          View Workout Plan →
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* =========================
+        DIET PLAN
+    ========================= */}
+
+    <div
+      className="coaching-card"
+      onClick={() =>
+        navigate("/member-diet-plan")
+      }
+    >
+
+      <div className="coaching-card-top">
+
+        <div className="coaching-card-icon">
+          🥗
+        </div>
+
+        <span className="coaching-card-badge">
+          NUTRITION
+        </span>
+
+      </div>
+
+      <div className="coaching-card-content">
+
+        <h3>
+          Personalized Nutrition
+        </h3>
+
+        <p>
+          View your daily nutrition plan, meals,
+          hydration guide and dietary recommendations.
+        </p>
+
+        <div className="coaching-card-link">
+          View Diet Plan →
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* =========================
+        ATTENDANCE
+    ========================= */}
+
+<div
+  className="coaching-card"
+  onClick={() => {
+    setShowAttendanceHistory(true);
+
+    setTimeout(() => {
+      document
+        .getElementById("attendance-history")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 100);
+  }}
+>
+  <div className="coaching-card-top">
+
+    <div className="coaching-card-icon">
+      📋
+    </div>
+
+    <span className="coaching-card-badge">
+      ATTENDANCE
+    </span>
+
+  </div>
+
+  <div className="coaching-card-content">
+
+    <h3>
+      Attendance
+    </h3>
+
+    <p>
+      Track your gym visits, check-in history
+      and maintain your training consistency.
+    </p>
+
+    <div className="coaching-card-link">
+      View Attendance History →
+    </div>
+
+  </div>
+</div>
+
+    {/* =========================
+        TRANSFORMATION
+    ========================= */}
+
+    <div
+      className="coaching-card"
+      onClick={() =>
+        navigate("/member-dashboard/my-transformation")
+      }
+    >
+
+      <div className="coaching-card-top">
+
+        <div className="coaching-card-icon">
+          ❤️
+        </div>
+
+        <span className="coaching-card-badge">
+          PROGRESS
+        </span>
+
+      </div>
+
+      <div className="coaching-card-content">
+
+        <h3>
+          My Transformation
+        </h3>
+
+        <p>
+          Track your measurements, progress,
+          transformation photos and coach notes.
+        </p>
+
+        <div className="coaching-card-link">
+          View Transformation →
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+{showAttendanceHistory && (
+  <div
+    className="attendance-history-panel"
+    style={{
+      marginTop: "20px",
+      background: "#111",
+      border: "1px solid #333",
+      borderRadius: "18px",
+      padding: "24px",
+    }}
   >
-    {checkedInToday ? "✅ Present Today" : "❌ Not Checked In"}
-  </span>
+    <h2>📅 Attendance History</h2>
 
-  <small className="last-visit">
-    Last Visit: {lastVisit}
-  </small>
+    {attendance.length === 0 ? (
+      <p style={{ opacity: 0.7 }}>
+        No attendance records found.
+      </p>
+    ) : (
+      <div style={{ marginTop: "20px" }}>
+        {attendance.map((item, index) => {
+          const checkIn = item.check_in
+            ? new Date(item.check_in)
+            : null;
 
-</div>
+          const checkOut = item.check_out
+            ? new Date(item.check_out)
+            : null;
 
-<div className="quick-card">
-  <div className="quick-icon">🏋️</div>
-  <h3>Workout Plan</h3>
-  <p>Coming Soon</p>
-</div>
+          let duration = "Currently Checked In";
 
-<div className="quick-card">
-  <div className="quick-icon">🥗</div>
-  <h3>Diet Plan</h3>
-  <p>Coming Soon</p>
-</div>
-<div className="quick-card">
+          if (checkIn && checkOut) {
+            const minutes = Math.floor(
+              (checkOut - checkIn) / 60000
+            );
 
-  <div className="quick-icon">❤️</div>
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
 
-  <h3>My Transformation</h3>
+            duration =
+              hours > 0
+                ? `${hours}h ${mins}m`
+                : `${mins}m`;
+          }
 
-  <p>
-    View Measurements,
-    Progress & Coach Notes
-  </p>
+          return (
+            <div
+              key={item.id || index}
+              style={{
+                padding: "16px",
+                marginBottom: "12px",
+                borderRadius: "14px",
+                background: "#1b1b1b",
+                border: "1px solid #333",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "15px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div>
+                  <strong>
+                    📅{" "}
+                    {checkIn
+                      ? checkIn.toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )
+                      : "Unknown Date"}
+                  </strong>
 
-  <button
-    className="view-btn"
-    onClick={() => navigate("/member-dashboard/my-transformation")}
-  >
-    View Full Report →
-  </button>
+                  <p style={{ margin: "8px 0 0" }}>
+                    🟢 Check-in:{" "}
+                    {checkIn
+                      ? checkIn.toLocaleTimeString(
+                          "en-IN",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )
+                      : "—"}
+                  </p>
 
-</div>
+                  <p style={{ margin: "5px 0 0" }}>
+                    🔴 Check-out:{" "}
+                    {checkOut
+                      ? checkOut.toLocaleTimeString(
+                          "en-IN",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )
+                      : "Still in gym"}
+                  </p>
+                </div>
 
-</div>
+                <div
+                  style={{
+                    alignSelf: "center",
+                    fontWeight: "700",
+                    color: "#ff4438",
+                  }}
+                >
+                  ⏱ {duration}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+)}
     </div>
   );
 }

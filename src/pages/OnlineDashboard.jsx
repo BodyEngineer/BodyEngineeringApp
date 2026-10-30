@@ -525,38 +525,215 @@ export default function OnlineDashboard() {
         </section>
       )}
 
-      <section
-        className="assessment-card"
-        style={{ marginTop: 24 }}
-      >
-        <h2>🏋️ My Coaching</h2>
+<section
+  className="coaching-section"
+  style={{ marginTop: 24 }}
+>
+  <div className="coaching-section-header">
+    <div>
+      <p className="coaching-eyebrow">
+        PERSONALIZED COACHING
+      </p>
 
-        <div className="quick-grid">
-          <div className="quick-card">
-            🍽
-            <h3>Diet Plan</h3>
-            <p>Coming Soon</p>
-          </div>
+      <h2 className="coaching-title">
+        🏆 My Coaching
+      </h2>
 
-          <div className="quick-card">
-            💪
-            <h3>Workout Plan</h3>
-            <p>Coming Soon</p>
-          </div>
+      <p className="coaching-subtitle">
+        Your personalized plans, check-ins and transformation journey.
+      </p>
+    </div>
+  </div>
 
-          <div className="quick-card">
-            📸
-            <h3>Weekly Check-In</h3>
-            <p>Coming Soon</p>
-          </div>
+  <div className="coaching-grid">
 
-          <div className="quick-card">
-            📈
-            <h3>Transformation</h3>
-            <p>Coming Soon</p>
-          </div>
+    {/* DIET */}
+    <div className="coaching-card">
+      <div className="coaching-card-top">
+        <div className="coaching-icon diet-icon">
+          🥗
         </div>
-      </section>
+
+        <span className="coaching-badge">
+          ACTIVE PLAN
+        </span>
+      </div>
+
+      <div className="coaching-card-content">
+        <h3>Personalized Nutrition</h3>
+
+        <p>
+          Your personalized diet plan is available from your coach.
+          Follow your nutrition plan and stay consistent with your goals.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => navigate("/online-dashboard/diet")}
+          className="coaching-card-button"
+        >
+          View My Diet Plan
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+
+
+    {/* WORKOUT */}
+    <div
+      className="coaching-card"
+      onClick={() => navigate("/online-dashboard/workout")}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          navigate("/online-dashboard/workout");
+        }
+      }}
+    >
+      <div className="coaching-card-top">
+        <div className="coaching-icon workout-icon">
+          💪
+        </div>
+
+        <span className="coaching-badge">
+          TRAINING
+        </span>
+      </div>
+
+      <div className="coaching-card-content">
+        <h3>Workout Plan</h3>
+
+        <p>
+          Follow your personalized training programme designed
+          by your coach for your goals.
+        </p>
+
+        <div className="coaching-card-link">
+          View Workout Plan
+          <span>→</span>
+        </div>
+      </div>
+    </div>
+
+
+  {/* TRAINING PERFORMANCE */}
+  <div
+      className="coaching-card"
+      onClick={() =>
+        navigate("/online-dashboard/performance")
+      }
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          navigate("/online-dashboard/performance");
+        }
+      }}
+    >
+      <div className="coaching-card-top">
+        <div className="coaching-icon performance-icon">
+          📊
+        </div>
+
+        <span className="coaching-badge">
+          PERFORMANCE
+        </span>
+      </div>
+
+      <div className="coaching-card-content">
+        <h3>Training Performance</h3>
+
+        <p>
+          Track your training consistency, workout history,
+          strength progress and personal records.
+        </p>
+
+        <div className="coaching-card-link">
+          View Performance
+          <span>→</span>
+        </div>
+      </div>
+    </div>
+
+    {/* MONTHLY ASSESSMENT */}
+<div
+  className="coaching-card"
+  onClick={() =>
+    navigate("/online-dashboard/assessment")
+  }
+  role="button"
+  tabIndex={0}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      navigate("/online-dashboard/assessment");
+    }
+  }}
+>
+  <div className="coaching-card-top">
+    <div className="coaching-icon">
+      📋
+    </div>
+
+    <span className="coaching-badge">
+      MONTHLY
+    </span>
+  </div>
+
+  <div className="coaching-card-content">
+    <h3>Monthly Assessment</h3>
+
+    <p>
+      Submit your latest weight, measurements,
+      progress photos and monthly update to your coach.
+    </p>
+
+    <div className="coaching-card-link">
+      Complete Assessment
+      <span>→</span>
+    </div>
+  </div>
+</div>
+
+
+{/* TRANSFORMATION */}
+<div
+  className="coaching-card"
+  onClick={() => navigate("/online-transformation-timeline")}
+  role="button"
+  tabIndex={0}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      navigate("/online-transformation-timeline");
+    }
+  }}
+>
+  <div className="coaching-card-top">
+    <div className="coaching-icon transformation-icon">
+      📈
+    </div>
+
+    <span className="coaching-badge">
+      PROGRESS
+    </span>
+  </div>
+
+  <div className="coaching-card-content">
+    <h3>Transformation</h3>
+
+    <p>
+      Track your progress, photos, measurements and results
+      throughout your transformation journey.
+    </p>
+
+    <div className="coaching-card-link">
+      View Transformation
+      <span>→</span>
+    </div>
+  </div>
+</div>
+    </div>
+</section>
     </div>
   );
 }

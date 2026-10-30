@@ -20,27 +20,27 @@ const [backAfter, setBackAfter] = useState(null);
     weight: "",
     bmi: "",
     body_fat: "",
-  
+
     neck: "",
     shoulders: "",
-  
+
     bust: "",
     under_bust: "",
-  
+
     waist: "",
     upper_abdomen: "",
     lower_abdomen: "",
     hips: "",
-  
+
     left_arm: "",
     right_arm: "",
-  
+
     left_thigh: "",
     right_thigh: "",
-  
+
     left_calf: "",
     right_calf: "",
-  
+
     goal: "",
     coach_notes: "",
   });
@@ -49,7 +49,7 @@ const [backAfter, setBackAfter] = useState(null);
     if (form.height && form.weight) {
       const h = Number(form.height) / 100;
       const bmi = (Number(form.weight) / (h * h)).toFixed(1);
-  
+
       setForm((prev) => ({
         ...prev,
         bmi,
@@ -87,11 +87,11 @@ const [backAfter, setBackAfter] = useState(null);
       alert("Please select a member.");
       return;
     }
-  
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
-  
+
     console.log("Current User:", user);
 console.log("User ID:", user?.id);
 console.log("Selected Member:", memberId);
@@ -107,43 +107,43 @@ const {
     .select("*")
     .eq("member_id", memberId)
     .eq("assessment_date", today);
-  
+
   console.log(existingAssessments);
   console.log(existingError);
-  
+
   const existingAssessment = existingAssessments?.[0] || null;
 
   console.log("Existing Assessment:", existingAssessment);
 
   async function uploadPhoto(file, folder) {
     if (!file) return null;
-  
+
     const fileName = `${memberId}/${Date.now()}-${folder}-${file.name}`;
-  
+
     const { error } = await supabase.storage
       .from("transformation-photos")
       .upload(fileName, file);
-  
+
     if (error) {
       console.log(error);
       return null;
     }
-  
+
     const { data } = supabase.storage
       .from("transformation-photos")
       .getPublicUrl(fileName);
-  
+
     return data.publicUrl;
   }
-  
+
   const frontBeforeUrl = await uploadPhoto(frontBefore, "front-before");
   const sideBeforeUrl = await uploadPhoto(sideBefore, "side-before");
   const backBeforeUrl = await uploadPhoto(backBefore, "back-before");
-  
+
   const frontAfterUrl = await uploadPhoto(frontAfter, "front-after");
   const sideAfterUrl = await uploadPhoto(sideAfter, "side-after");
   const backAfterUrl = await uploadPhoto(backAfter, "back-after");
-  
+
 const assessmentData = {
 owner_id: user.id,
 member_id: memberId,
@@ -491,7 +491,7 @@ onChange={handleChange}
 
 </div>
 
-<div style={{ 
+<div style={{
     marginTop: "35px" ,
 
     }}>
@@ -501,60 +501,54 @@ onChange={handleChange}
 <h2>📷 Transformation Photos</h2>
 
 <div className="assessment-card photo-section">
-
   <h3 className="photo-heading">📸 Before Photos</h3>
 
   <div className="photo-grid">
-
     <ImagePicker
       label="Front Before"
-      value={frontBefore}
-      onChange={setFrontBefore}
+      image={frontBefore}
+      setImage={setFrontBefore}
     />
 
     <ImagePicker
       label="Side Before"
-      value={sideBefore}
-      onChange={setSideBefore}
+      image={sideBefore}
+      setImage={setSideBefore}
     />
 
     <ImagePicker
       label="Back Before"
-      value={backBefore}
-      onChange={setBackBefore}
+      image={backBefore}
+      setImage={setBackBefore}
     />
-
   </div>
-  </div>
+</div>
 
-  <div className="assessment-card photo-section">
+<div className="assessment-card photo-section">
+  <h3 className="photo-heading">✨ After Photos</h3>
 
-<h3 className="photo-heading">✨ After Photos</h3>
-
-<div className="photo-grid">
-
+  <div className="photo-grid">
     <ImagePicker
       label="Front After"
-      value={frontAfter}
-      onChange={setFrontAfter}
+      image={frontAfter}
+      setImage={setFrontAfter}
     />
 
     <ImagePicker
       label="Side After"
-      value={sideAfter}
-      onChange={setSideAfter}
+      image={sideAfter}
+      setImage={setSideAfter}
     />
 
     <ImagePicker
       label="Back After"
-      value={backAfter}
-      onChange={setBackAfter}
+      image={backAfter}
+      setImage={setBackAfter}
     />
-
-  </div>
   </div>
 </div>
-  
+</div>
+
   <button
     className="save-btn"
     onClick={handleSave}
@@ -572,7 +566,7 @@ onChange={handleChange}
 
 </div>
 </div>
-    
+
 
   );
 }

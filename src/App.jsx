@@ -19,10 +19,9 @@ import BodyAssessment from './pages/BodyAssessment'
 import MyTransformation from "./pages/MyTransformation";
 import OnlineClients from './pages/OnlineClients'
 import AddOnlineClient from './pages/AddOnlineClient'
-import AddAssessment from './pages/AddAssessment'
 import AssessmentTimeline from './pages/AssessmentTimeline';
-import OnlineClientProfile from './pages/OnlineClientProfile';   
-import OnlineDashboard from "./pages/OnlineDashboard"; 
+import OnlineClientProfile from './pages/OnlineClientProfile';
+import OnlineDashboard from "./pages/OnlineDashboard";
 import WebsiteManagement from "./pages/WebsiteManagement";
 import WebsiteTransformations from "./pages/WebsiteTransformations";
 import WebsiteHeroMedia from "./pages/WebsiteHeroMedia";
@@ -36,6 +35,19 @@ import ResetPassword from "./pages/ResetPassword";
 import OwnerForgotPassword from "./pages/admin/OwnerForgotPassword";
 import CoachProfileManagement from "./pages/CoachProfileManagement";
 import MemberAttendance from "./pages/MemberAttendance";
+import WorkoutPlan from "./pages/WorkoutPlan";
+import DietPlan from "./pages/DietPlan";
+import MemberDietPlan from "./pages/MemberDietPlan";
+import OnlineDietPlan from "./pages/OnlineDietPlan";
+import MonthlyCheckin from "./pages/MonthlyCheckin";
+import AddOnlineWorkout from "./pages/AddOnlineWorkout";
+import OnlineWorkoutPlan from "./pages/OnlineWorkoutPlan";
+import OnlinePerformance from "./pages/OnlinePerformance";
+import OwnerOnlinePerformance from "./pages/OwnerOnlinePerformance";
+import OnlineAssessment from "./pages/OnlineAssessment";
+import OnlineTransformationTimeline from "./pages/OnlineTransformationTimeline";
+import PaymentHistory from "./pages/PaymentHistory"
+
 
 export default function App() {
   return (
@@ -61,24 +73,6 @@ export default function App() {
   element={<ResetPassword />}
 />
 
-          <Route
-  path="/online-dashboard"
-  element={
-    <MemberProtectedRoute>
-      <OnlineDashboard />
-    </MemberProtectedRoute>
-  }
-/>
-
-<Route
-  path="/member-attendance"
-  element={
-    <MemberProtectedRoute>
-      <MemberAttendance />
-    </MemberProtectedRoute>
-  }
-/>
-
 <Route
   path="/member-dashboard"
   element={
@@ -88,7 +82,23 @@ export default function App() {
   }
 />
 
+<Route
+  path="/member-diet-plan"
+  element={
+    <MemberProtectedRoute>
+      <MemberDietPlan />
+    </MemberProtectedRoute>
+  }
+/>
 
+<Route
+  path="/member-dashboard/workout-plan"
+  element={
+    <MemberProtectedRoute>
+      <WorkoutPlan />
+    </MemberProtectedRoute>
+  }
+/>
 
 <Route
   path="/member-dashboard/my-transformation"
@@ -107,6 +117,90 @@ export default function App() {
     </MemberProtectedRoute>
   }
 />
+
+<Route
+  path="/member-attendance"
+  element={
+    <MemberProtectedRoute>
+      <MemberAttendance />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/member-dashboard/monthly-checkin"
+  element={
+    <MemberProtectedRoute>
+      <MonthlyCheckin />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/online-dashboard/performance"
+  element={<OnlinePerformance />}
+/>
+
+<Route
+  path="/online-dashboard"
+  element={
+    <MemberProtectedRoute>
+      <OnlineDashboard />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/online-dashboard/assessment"
+  element={
+    <MemberProtectedRoute>
+      <OnlineAssessment />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/online-dashboard/transformation"
+  element={<OnlineTransformationTimeline />}
+/>
+
+<Route
+  path="/online-transformation-timeline"
+  element={
+    <MemberProtectedRoute>
+      <OnlineTransformationTimeline />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/online-clients/:clientId/performance"
+  element={
+    <OwnerProtectedRoute>
+      <OwnerOnlinePerformance />
+    </OwnerProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/online-dashboard/diet"
+  element={
+    <MemberProtectedRoute>
+      <OnlineDietPlan />
+    </MemberProtectedRoute>
+  }
+/>
+
+<Route
+  path="/online-dashboard/workout"
+  element={
+    <MemberProtectedRoute>
+      <OnlineWorkoutPlan />
+    </MemberProtectedRoute>
+  }
+/>
+
           <Route
             element={
               <OwnerProtectedRoute>
@@ -134,7 +228,26 @@ export default function App() {
   path="/website-settings"
   element={<WebsiteSettings />}
 />
-            <Route path="/online-clients/:id/add-assessment" element={<AddAssessment />} />
+
+<Route
+  path="/website-management/contact"
+  element={<WebsiteSettings />}
+/>
+
+<Route
+  path="/online-clients/:clientId/diet-plan"
+  element={
+    <OwnerProtectedRoute>
+      <DietPlan />
+    </OwnerProtectedRoute>
+  }
+/>
+
+<Route
+  path="/members/:memberId/diet-plan"
+  element={<DietPlan />}
+/>
+
             <Route
   path="/body-assessment"
   element={<BodyAssessment />}
@@ -145,8 +258,23 @@ export default function App() {
     element={<OnlineClientProfile />}
 />
 
+<Route
+  path="/online-clients/:id/workout/add"
+  element={<AddOnlineWorkout />}
+/>
+
+<Route
+  path="/online-clients/:id/workout/:workoutId/edit"
+  element={<AddOnlineWorkout />}
+/>
+
 
             <Route path="/alerts" element={<Alerts />} />
+
+            <Route
+  path="/payment-history"
+  element={<PaymentHistory />}
+/>
 
 <Route
   path="/website-management/transformations"
@@ -186,7 +314,7 @@ element= {<WebsitePrograms />}
           <Route path="*" element={<Navigate to="/member-login" replace />} />
         </Routes>
 
-        
+
       </BrowserRouter>
 
     </AuthProvider>

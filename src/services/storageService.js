@@ -23,23 +23,48 @@ export async function uploadProfilePhoto(memberId, file) {
   return data.publicUrl;
 }
 
-// Upload Assessment Photos
-export async function uploadAssessmentPhoto(memberId, file, photoType) {
-  const extension = file.name.split(".").pop();
+export async function uploadAssessmentPhoto(
+  memberId,
+  assessmentId,
+  file,
+  photoType
+) {
+  const extension = file.name.split(".").pop().toLowerCase();
 
-  const filePath = `${memberId}/${photoType}.${extension}`;
+  const filePath =
+    `${memberId}/${assessmentId}/${photoType}.${extension}`;
 
-  const { error } = await supabase.storage
+  console.log("📸 ASSESSMENT PHOTO");
+  console.log("Bucket:", BUCKET);
+  console.log("Member ID:", memberId);
+  console.log("Assessment ID:", assessmentId);
+  console.log("Photo Type:", photoType);
+  console.log("File:", file.name);
+  console.log("Path:", filePath);
+
+  const { data: uploadData, error } = await supabase.storage
     .from(BUCKET)
     .upload(filePath, file, {
       upsert: true,
+      contentType: file.type,
     });
 
-  if (error) throw error;
+  console.log("📤 UPLOAD RESULT:", uploadData);
+  console.log("📤 UPLOAD ERROR:", error);
 
-  const { data } = supabase.storage
+  if (error) {
+    console.error("❌ ASSESSMENT PHOTO UPLOAD FAILED:", error);
+    throw error;
+  }
+
+  const { data: publicData } = supabase.storage
     .from(BUCKET)
     .getPublicUrl(filePath);
 
-  return data.publicUrl;
+  console.log(
+    "🌐 ASSESSMENT PHOTO URL:",
+    publicData.publicUrl
+  );
+
+  return publicData.publicUrl;
 }

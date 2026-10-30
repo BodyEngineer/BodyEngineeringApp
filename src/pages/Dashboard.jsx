@@ -10,6 +10,7 @@ import Button from '../components/Button'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { computeDashboardStats, getRenewalAlerts } from '../lib/members'
+import CashRenewalModal from '../components/CashRenewalModal'
 
 export default function Dashboard() {
   const { openSidebar } = useOutletContext()
@@ -17,12 +18,14 @@ export default function Dashboard() {
   const [members, setMembers] = useState([])
   const [onlineClients, setOnlineClients] = useState([])
   const [paymentRequests, setPaymentRequests] = useState([])
-const [paymentHistory, setPaymentHistory] = useState([])
+  const [paymentHistory, setPaymentHistory] = useState([])
 const [selectedPayment, setSelectedPayment] = useState(null)
  const [paymentImageUrl, setPaymentImageUrl] = useState("")
  const [renewalPeriod, setRenewalPeriod] = useState("monthly")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [renewTarget, setRenewTarget] = useState(null)
+const [renewing, setRenewing] = useState(false)
 
   useEffect(() => {
     fetchMembers()
@@ -34,7 +37,7 @@ const [selectedPayment, setSelectedPayment] = useState(null)
         setPaymentImageUrl("")
         return
       }
-      
+
       console.log("Selected payment screenshot path:", selectedPayment.screenshot_url)
 console.log("Online client ID:", selectedPayment.online_client_id)
 console.log("Gym member ID:", selectedPayment.member_id)
@@ -42,40 +45,40 @@ console.log("Gym member ID:", selectedPayment.member_id)
       const { data, error } = await supabase.storage
         .from("payment-media")
         .createSignedUrl(selectedPayment.screenshot_url, 300)
-  
+
       if (error) {
         console.error("Payment image error:", error)
         setPaymentImageUrl("")
         return
       }
-  
+
       setPaymentImageUrl(data?.signedUrl || "")
     }
-  
+
     loadPaymentImage()
   }, [selectedPayment])
 
   const approvePayment = async () => {
     if (!selectedPayment?.id) return
-  
+
     try {
       setError('')
-  
+
       const monthsMap = {
         monthly: 1,
         quarterly: 3,
         'half-yearly': 6,
         yearly: 12,
       }
-  
+
       const monthsToAdd = monthsMap[renewalPeriod]
-  
+
       if (!monthsToAdd) {
         throw new Error('Invalid renewal period selected.')
       }
-  
+
       const today = new Date()
-  
+
      // --------------------------------------------------
 // 2. ONLINE CLIENT PAYMENT
 // --------------------------------------------------
@@ -145,43 +148,43 @@ if (selectedPayment.online_client_id) {
     updatedOnlineClient
   )
 }
-    
-  
+
+
       // ==================================================
       // 2. GYM MEMBER PAYMENT
       // ==================================================
-  
+
       if (selectedPayment.member_id) {
-  
+
         const member = members.find(
           (m) =>
             String(m.id) ===
             String(selectedPayment.member_id)
         )
-  
+
         if (!member) {
           throw new Error(
             `Gym member not found. Member ID: ${selectedPayment.member_id}`
           )
         }
-  
+
         const currentExpiry = member.membership_end
           ? new Date(member.membership_end)
           : null
-  
+
         const baseDate =
           currentExpiry || today
-            
-  
+
+
         const newExpiry = new Date(baseDate)
-  
+
         newExpiry.setMonth(
           newExpiry.getMonth() + monthsToAdd
         )
-  
+
         const newExpiryDate =
           newExpiry.toISOString().split('T')[0]
-  
+
         const {
           data: updatedMember,
           error: memberError,
@@ -195,32 +198,32 @@ if (selectedPayment.online_client_id) {
           .eq('owner_id', user.id)
           .select()
           .maybeSingle()
-  
+
         if (memberError) {
           console.error(
             'MEMBER UPDATE ERROR:',
             memberError
           )
-  
+
           throw memberError
         }
-  
+
         if (!updatedMember) {
           throw new Error(
             'Member was not updated. Check the members RLS policy.'
           )
         }
       }
-  
+
       // ==================================================
       // 3. APPROVE PAYMENT REQUEST
       // ==================================================
-  
+
       console.log(
         'APPROVING PAYMENT REQUEST:',
         selectedPayment.id
       )
-  
+
       const {
         data: approvedPayment,
         error: paymentError,
@@ -235,56 +238,56 @@ if (selectedPayment.online_client_id) {
         .eq('status', 'pending')
         .select()
         .maybeSingle()
-  
+
       if (paymentError) {
         console.error(
           'PAYMENT APPROVAL ERROR:',
           paymentError
         )
-  
+
         throw paymentError
       }
-  
+
       if (!approvedPayment) {
         throw new Error(
           'Payment was not approved. It may already have been processed or the update is blocked by RLS.'
         )
       }
-  
+
       console.log(
         'PAYMENT APPROVED SUCCESSFULLY:',
         approvedPayment
       )
-  
+
       // ==================================================
       // 4. CLOSE MODAL
       // ==================================================
-  
+
       setSelectedPayment(null)
       setPaymentImageUrl('')
       setRenewalPeriod('monthly')
-  
+
       // ==================================================
       // 5. REFRESH DASHBOARD
       // ==================================================
-  
+
       await fetchMembers()
-  
+
     } catch (error) {
-  
+
       console.error(
         '================================='
       )
-  
+
       console.error(
         'APPROVE PAYMENT FAILED:',
         error
       )
-  
+
       console.error(
         '================================='
       )
-  
+
       setError(
         error?.message ||
         'Something went wrong while approving the payment.'
@@ -292,13 +295,13 @@ if (selectedPayment.online_client_id) {
     }
   }
 
-  
+
   const rejectPayment = async () => {
     if (!selectedPayment) return
-  
+
     try {
       setError('')
-  
+
       const { data: rejectedPayment, error } = await supabase
   .from('payment_requests')
   .update({
@@ -316,13 +319,13 @@ if (!rejectedPayment) {
     'This payment has already been processed or is no longer pending.'
   )
 }
-  
+
       if (error) throw error
-  
+
       setSelectedPayment(null)
       setPaymentImageUrl('')
       await fetchMembers()
-  
+
     } catch (error) {
       console.error('Reject payment error:', error)
       setError(error.message)
@@ -331,69 +334,134 @@ if (!rejectedPayment) {
 
   const fetchMembers = async () => {
     if (!user) return
+
     setLoading(true)
     setError('')
 
-    const { data, error: fetchError } = await supabase
-      .from('members')
-      .select('*')
-      .eq('owner_id', user.id)
-      .order('created_at', { ascending: false })
+    try {
+      // ==================================================
+      // 1. FETCH GYM MEMBERS
+      // ==================================================
 
-      const { data: onlineData } = await supabase
-  .from("online_clients")
-  .select("*")
-  .eq("owner_id", user.id);
+      const {
+        data: memberData,
+        error: memberError,
+      } = await supabase
+        .from('members')
+        .select('*')
+        .eq('owner_id', user.id)
+        .order('created_at', { ascending: false })
 
-  
-  const { data: paymentData, error: paymentError } = await supabase
-  .from("payment_requests")
-  .select("*")
-  .eq("status", "pending")
-  .order("created_at", { ascending: false });
+      if (memberError) {
+        throw memberError
+      }
 
-  if (paymentError) {
-    console.error("Pending payment error:", paymentError);
-  } else {
-    const enrichedPayments = (paymentData || []).map((payment) => {
-      const gymMember = payment.member_id
-        ? data?.find((m) => m.id === payment.member_id)
-        : null;
-  
-      const onlineClient = payment.online_client_id
-        ? onlineData?.find((c) => c.id === payment.online_client_id)
-        : null;
-  
-      return {
-        ...payment,
-        member_name:
-          gymMember?.full_name ||
-          onlineClient?.full_name ||
-          "Unknown Member",
-      };
-    });
-  
-    setPaymentRequests(enrichedPayments);
-  }
+      // ==================================================
+      // 2. FETCH ONLINE CLIENTS
+      // ==================================================
 
-const { data: historyData, error: historyError } = await supabase
-  .from("payment_requests")
-  .select("*")
-  .order("payment_date", { ascending: false, nullsFirst: false });
+      const {
+        data: onlineData,
+        error: onlineError,
+      } = await supabase
+        .from('online_clients')
+        .select('*')
+        .eq('owner_id', user.id)
 
-if (historyError) {
-  console.error("Payment history error:", historyError);
-} else {
-  setPaymentHistory(historyData || []);
-}
+      if (onlineError) {
+        throw onlineError
+      }
 
-    if (fetchError) {
-      setError(fetchError.message)
-    } else {
-      setMembers(data || [])
-setOnlineClients(onlineData || [])
+      // ==================================================
+      // 3. FETCH PENDING PAYMENTS
+      // ==================================================
+
+      const {
+        data: paymentData,
+        error: paymentError,
+      } = await supabase
+        .from('payment_requests')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (paymentError) {
+        console.error('Pending payment error:', paymentError)
+      } else {
+        const enrichedPayments = (paymentData || []).map((payment) => {
+          const gymMember = payment.member_id
+            ? (memberData || []).find(
+                (m) => m.id === payment.member_id
+              )
+            : null
+
+          const onlineClient = payment.online_client_id
+            ? (onlineData || []).find(
+                (c) => c.id === payment.online_client_id
+              )
+            : null
+
+          return {
+            ...payment,
+            member_name:
+              gymMember?.full_name ||
+              onlineClient?.full_name ||
+              'Unknown Member',
+          }
+        })
+
+        setPaymentRequests(enrichedPayments)
+      }
+
+      // ==================================================
+      // 4. FETCH APPROVED PAYMENT HISTORY
+      // ==================================================
+
+      const {
+        data: approvedPayments,
+        error: historyError,
+      } = await supabase
+        .from('payment_requests')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+
+      if (historyError) {
+        console.error(
+          'Payment history error:',
+          historyError
+        )
+
+        setPaymentHistory([])
+      } else {
+        console.log(
+          'APPROVED PAYMENT HISTORY:',
+          approvedPayments
+        )
+
+        setPaymentHistory(approvedPayments || [])
+      }
+
+      // ==================================================
+      // 5. UPDATE DASHBOARD DATA
+      // ==================================================
+
+      setMembers(memberData || [])
+      setOnlineClients(onlineData || [])
+
+    } catch (error) {
+      console.error(
+        'Dashboard fetch error:',
+        error
+      )
+
+      setError(
+        error?.message ||
+        'Failed to load dashboard data.'
+      )
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const stats = computeDashboardStats(members)
@@ -632,7 +700,10 @@ const totalRevenue = paymentHistory
             </div>
 
             {alerts.length > 0 ? (
-              <AlertList alerts={alerts} />
+             <AlertList
+             alerts={alerts}
+             showRenew={false}
+           />
             ) : (
               <EmptyState
                 title="No renewal alerts"
@@ -640,110 +711,6 @@ const totalRevenue = paymentHistory
               />
             )}
           </section>
-
-          <section className="dashboard-section">
-
-  <div className="section-header">
-    <h2 className="section-title">
-      📋 Payment History
-    </h2>
-  </div>
-
-  {paymentHistory.length === 0 ? (
-    <EmptyState
-      title="No payment history"
-      description="Approved and rejected payments will appear here."
-    />
-  ) : (
-    <div className="payment-request-list">
-
-      {paymentHistory.map((payment) => {
-
-        const renewalLabel = payment.renewal_period
-          ? payment.renewal_period
-              .replace("-", " ")
-              .replace(/\b\w/g, (char) => char.toUpperCase())
-          : "Not specified"
-
-        return (
-          <div
-            key={payment.id}
-            className="payment-request-card"
-          >
-
-            <div>
-
-              <h3>
-              {payment.member_name}
-              </h3>
-
-              <p>
-                Amount: ₹
-                {Number(payment.amount || 0).toLocaleString("en-IN")}
-              </p>
-
-              <p>
-                Renewal: {renewalLabel}
-              </p>
-
-              <p>
-  Payment Date:{" "}
-  {new Date(
-    payment.payment_date || payment.created_at
-  ).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  })}
-</p>
-
-<p>
-  Method:{" "}
-  {payment.payment_method
-    ? payment.payment_method.charAt(0).toUpperCase() +
-      payment.payment_method.slice(1)
-    : "Not specified"}
-</p>
-
-              {payment.approved_at && (
-                <p>
-                  Approved:{" "}
-                  {new Date(
-                    payment.approved_at
-                  ).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-              )}
-
-              <span
-                className={
-                  payment.status === "approved"
-                    ? "status-success"
-                    : payment.status === "rejected"
-                    ? "status-danger"
-                    : "status-warning"
-                }
-              >
-                {payment.status === "approved"
-                  ? "✅ Approved"
-                  : payment.status === "rejected"
-                  ? "❌ Rejected"
-                  : "⏳ Pending"}
-              </span>
-
-            </div>
-
-          </div>
-        )
-      })}
-
-    </div>
-  )}
-
-</section>
 
           <section className="dashboard-section">
 
@@ -1083,7 +1050,7 @@ setRenewalPeriod("monthly")
               >
                 ✅ Approve Payment
               </button>
-            
+
               <button
                 onClick={rejectPayment}
                 style={{
@@ -1100,7 +1067,7 @@ setRenewalPeriod("monthly")
                 ❌ Reject Payment
               </button>
             </div>
-            
+
             </div>
             </div>
       )}

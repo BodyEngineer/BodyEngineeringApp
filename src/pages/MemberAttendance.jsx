@@ -73,55 +73,55 @@ export default function MemberAttendance() {
   async function startScanner() {
     setError("");
     setMessage("");
-  
+
     if (!member) return;
-  
+
     try {
       setScanning(true);
-  
+
       // Give React time to render the scanner container
       await new Promise((resolve) => setTimeout(resolve, 300));
-  
+
       const scanner = new Html5Qrcode("attendance-qr-reader");
-  
+
       scannerRef.current = scanner;
-  
+
       await scanner.start(
         { facingMode: "environment" },
-  
+
         {
           fps: 15,
-  
+
           // IMPORTANT:
           // No qrbox.
           // The entire camera view can now detect the QR.
           disableFlip: false,
         },
-  
+
         async (decodedText) => {
           console.log("QR SCANNED:", decodedText);
-  
+
           // Prevent multiple detections
           if (!scannerRef.current) return;
-  
+
           setMessage("QR detected. Verifying...");
-  
+
           await stopScanner();
-  
+
           await verifyQRCode(decodedText);
         },
-  
+
         (errorMessage) => {
           // Normal scanning errors are ignored.
         }
       );
-  
+
       console.log("Camera scanner started successfully");
     } catch (err) {
       console.error("CAMERA ERROR:", err);
-  
+
       setScanning(false);
-  
+
       setError(
         `${err.name || "CameraError"}: ${
           err.message || "Unable to open camera."
@@ -151,34 +151,34 @@ export default function MemberAttendance() {
 
   async function verifyQRCode(qrValue) {
     if (!member) return;
-  
+
     try {
       setError("");
       setMessage("");
-  
+
       const scannedValue = qrValue.trim();
-  
+
       console.log("=================================");
       console.log("QR VALUE SCANNED:", scannedValue);
       console.log("=================================");
-  
+
       let scannedUrl;
-  
+
       try {
         scannedUrl = new URL(scannedValue);
       } catch (err) {
         console.error("QR is not a valid URL:", scannedValue);
-  
+
         setError(
           `❌ Invalid QR format.\nScanned: ${scannedValue}`
         );
-  
+
         return;
       }
-  
+
       console.log("QR HOST:", scannedUrl.hostname);
       console.log("QR PATH:", scannedUrl.pathname);
-  
+
       /*
        * Normalize the path.
        *
@@ -188,123 +188,91 @@ export default function MemberAttendance() {
        * /member-attendance/
        * /member-attendance?anything
        */
-  
+
       const scannedPath =
         scannedUrl.pathname.replace(/\/+$/, "");
-  
+
       const expectedPath = "/member-attendance";
-  
+
       if (scannedPath !== expectedPath) {
         setError(
           `❌ Invalid QR code.\nScanned path: ${scannedUrl.pathname}`
         );
-  
+
         return;
       }
-  
+
       /*
        * QR is valid.
        */
-  
+
       setMessage("✅ QR detected. Recording attendance...");
-  
+
       /*
        * Check if member is already checked in.
        */
-  
-      const { data: existingSession, error: existingError } =
-        await supabase
-          .from("attendance")
-          .select("*")
-          .eq("member_id", member.id)
-          .is("check_out", null)
-          .order("check_in", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-  
-      if (existingError) {
-        throw existingError;
-      }
-  
-      if (existingSession) {
+      const { data: existingSessions, error: existingError } =
+      await supabase
+        .from("attendance")
+        .select("*")
+        .eq("member_id", member.id)
+        .is("check_out", null)
+        .order("check_in", { ascending: false })
+        .limit(1);
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    const existingSession = existingSessions?.[0] || null;
+
+    if (existingSession) {
         const checkOutTime = new Date().toISOString();
-      
-        console.log("CHECKING OUT SESSION:", existingSession.id);
-      
-        const { data: updatedSession, error: checkoutError } =
-          await supabase
-            .from("attendance")
-            .update({
-              check_out: checkOutTime,
-            })
-            .eq("id", existingSession.id)
-            .select()
-            .maybeSingle();
-      
+
+        const { error: checkoutError } = await supabase
+          .from("attendance")
+          .update({
+            check_out: checkOutTime,
+          })
+          .eq("id", existingSession.id);
+
         if (checkoutError) {
           console.error("CHECKOUT UPDATE ERROR:", checkoutError);
           throw checkoutError;
         }
-      
-        /*
-         * VERY IMPORTANT:
-         * If Supabase returns no updated row,
-         * the database was NOT actually changed.
-         */
-        if (!updatedSession) {
-          console.error(
-            "CHECKOUT FAILED: No attendance row was updated."
-          );
-      
-          throw new Error(
-            "Check-out could not be saved. Please try again or contact the gym."
-          );
-        }
-      
+
         console.log(
           "CHECKOUT SAVED SUCCESSFULLY:",
-          updatedSession
+          existingSession.id,
+          checkOutTime
         );
-      
-        /*
-         * Calculate duration using the actual
-         * database-updated check_out time.
-         */
-      
-        const checkInTime = new Date(
-          existingSession.check_in
-        );
-      
-        const checkOut = new Date(
-          updatedSession.check_out
-        );
-      
+
+        const checkInTime = new Date(existingSession.check_in);
+        const checkOut = new Date(checkOutTime);
+
         const durationMinutes = Math.floor(
           (checkOut - checkInTime) / 60000
         );
-      
-        const hours = Math.floor(
-          durationMinutes / 60
-        );
-      
+
+        const hours = Math.floor(durationMinutes / 60);
         const minutes = durationMinutes % 60;
-      
+
         const durationText =
           hours > 0
             ? `${hours}h ${minutes}m`
             : `${minutes}m`;
-      
+
         setMessage(
           `✅ Check-out successful! Gym duration: ${durationText}`
         );
-      
+
         return;
       }
-  
+
       /*
        * Create attendance record.
        */
-  
+
       const { error: insertError } =
         await supabase
           .from("attendance")
@@ -313,18 +281,18 @@ export default function MemberAttendance() {
             member_id: member.id,
             check_in: new Date().toISOString(),
           });
-  
+
       if (insertError) {
         throw insertError;
       }
-  
+
       setMessage(
         "✅ Attendance recorded successfully!"
       );
-  
+
     } catch (err) {
       console.error("QR attendance error:", err);
-  
+
       setError(
         err.message ||
           "Unable to record attendance."

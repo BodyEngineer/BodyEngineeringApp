@@ -5,7 +5,7 @@ import { formatDate } from '../lib/members'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-export default function AlertList({ alerts }) {
+export default function AlertList({ alerts, onRenew, showRenew = true }) {
   const [settings, setSettings] = useState({
     whatsapp_number: '',
   })
@@ -29,11 +29,11 @@ export default function AlertList({ alerts }) {
   return (
     <div className="alert-list">
       {alerts.map((alert) => {
-        const isOnline = alert.type === 'online'
+        const isOnline = alert.alertType === 'online'
 
         return (
           <div
-            key={`${alert.type}-${alert.id}`}
+          key={`${alert.alertType}-${alert.id}`}
             className={`alert-item alert-item-${alert.status}`}
           >
             <div className="alert-item-icon">
@@ -175,27 +175,30 @@ Team Body Engineering 💪
                 📱 WhatsApp Reminder
               </button>
 
-              {/* =========================
+  {/* =========================
     RENEW
 ========================= */}
-
-{alert.alertType === "online" ? (
-  <Link
-  to={`/online-clients?renew=${alert.id}`}
-    className="alert-item-action"
-  >
-    <RefreshCw size={16} />
-    Renew
-  </Link>
-) : (
-  <Link
-    to={`/members/${alert.id}/edit`}
-    className="alert-item-action"
-  >
-    <RefreshCw size={16} />
-    Renew
-  </Link>
+{showRenew && (
+  alert.alertType === "online" ? (
+    <Link
+      to={`/online-clients?renew=${alert.id}`}
+      className="alert-item-action"
+    >
+      <RefreshCw size={16} />
+      Renew
+    </Link>
+  ) : (
+    <button
+      type="button"
+      className="alert-item-action"
+      onClick={() => onRenew(alert)}
+    >
+      <RefreshCw size={16} />
+      Renew
+    </button>
+  )
 )}
+
 
             </div>
           </div>

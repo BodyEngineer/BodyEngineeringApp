@@ -18,11 +18,24 @@ export async function addOnlineClient(values) {
     }
   );
 
-  if (error) throw error;
+  if (error) {
+    let message = "Unable to create online client.";
+
+    try {
+      const errorBody = await error.context.json();
+
+      if (errorBody?.error) {
+        message = errorBody.error;
+      }
+    } catch {
+      // Keep default message
+    }
+
+    throw new Error(message);
+  }
 
   return data;
 }
-
 export async function getOnlineClients() {
   const {
     data: { user },

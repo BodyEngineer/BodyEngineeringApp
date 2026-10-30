@@ -11,6 +11,7 @@ import {
   X,
   Globe,
   Settings,
+  CreditCard,
 } from 'lucide-react'
 
 import Logo from './Logo'
@@ -30,6 +31,8 @@ const navItems = [
   { to: '/members/add', icon: UserPlus, label: 'Add Member' },
 
   { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
+
+  { to: '/payment-history', icon: CreditCard, label: 'Payment History' },
 
   {
     to: '/body-assessment',
