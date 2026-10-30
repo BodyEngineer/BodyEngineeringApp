@@ -17,23 +17,23 @@ export default function ConsultationSection() {
     address: "",
     google_maps_url: "",
   });
-  
+
   useEffect(() => {
     loadSettings();
   }, []);
-  
+
   const loadSettings = async () => {
     const { data } = await supabase
       .from("website_settings")
       .select("*")
       .eq("id", 1)
       .single();
-  
+
     if (data) {
       setSettings(data);
     }
   };
-  
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -44,27 +44,25 @@ export default function ConsultationSection() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const message = `Hi Body Engineering,
+    if (!settings.whatsapp_number) {
+      alert("WhatsApp number is currently unavailable. Please try again later.");
+      return;
+    }
 
-I'm interested in a consultation.
+    const message = `Hi Body Engineering!
 
-Name: ${form.name}
-Phone: ${form.phone}
-Goal: ${form.goal}`;
+  I'm interested in a free consultation.
 
-    const whatsappUrl =
-    window.open(
-      `https://wa.me/${settings.whatsapp_number}`,
-      "_blank"
-    );
+  Name: ${form.name}
+  Phone: ${form.phone}
+  Goal: ${form.goal}
 
-    window.open(
-      whatsappUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
+  Please share more details. Thank you!`;
+
+    const whatsappUrl = `https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
-
   return (
     <section
       id="consultation"

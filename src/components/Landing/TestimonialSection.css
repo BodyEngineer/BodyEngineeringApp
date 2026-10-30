@@ -473,36 +473,80 @@
   }
   
   /* =========================================
-     SMALL MOBILE
-  ========================================= */
-  
-  @media (max-width: 480px) {
-  
-    .testimonial-heading h2 {
-      font-size: 33px;
-    }
-  
-    .review-card {
-      padding: 25px 20px;
-    }
-  
-    .review-avatar {
-      width: 48px;
-      height: 48px;
-    }
-  
-    .review-person h3 {
-      font-size: 17px;
-    }
-  
-    .google-icon {
-      width: 35px;
-      height: 35px;
-  
-      font-size: 19px;
-    }
-  
-    .review-arrow {
-      display: none;
-    }
+   SMALL MOBILE — REVIEW CAROUSEL FIX
+========================================= */
+
+@media (max-width: 480px) {
+
+  .testimonial-section {
+    padding: 65px 16px;
   }
+
+  .testimonial-heading h2 {
+    font-size: 33px;
+  }
+
+  .review-card {
+    padding: 28px 48px;
+    min-height: auto;
+    border-radius: 24px;
+  }
+
+  .review-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .review-person h3 {
+    font-size: 17px;
+  }
+
+  .google-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 19px;
+  }
+
+  .review-text {
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  /* Keep navigation visible on mobile */
+  .review-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    font-size: 25px;
+
+    top: 50%;
+    z-index: 10;
+
+    background: rgba(25, 25, 25, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .left-arrow {
+    left: 6px;
+  }
+
+  .right-arrow {
+    right: 6px;
+  }
+
+  .google-review-btn {
+    width: 100%;
+    max-width: 340px;
+    padding: 17px 18px;
+    font-size: 14px;
+  }
+
+  .review-dots {
+    gap: 9px;
+  }
+}

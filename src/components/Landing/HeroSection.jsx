@@ -1,5 +1,6 @@
 import "./HeroSection.css";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/body-engineering-logo.png";
 
 export default function HeroSection() {
   const navigate = useNavigate();
@@ -22,12 +23,11 @@ export default function HeroSection() {
 
       <div className="hero-content">
 
-        <img
-          src="/body-engineering-logo.png"
-          className="hero-logo"
-          alt="Body Engineering"
-        />
-
+      <img
+  src={logo}
+  className="hero-logo"
+  alt="Body Engineering"
+/>
         <h1 className="hero-title">
           BODY <span> ENGINEERING </span>
         </h1>

@@ -1,10 +1,33 @@
-import { useEffect, useState } from "react";
 import "./TestimonialSection.css";
 import { supabase } from "../../lib/supabase";
+import { useEffect, useState, useRef } from "react";
 
 export default function TestimonialSection() {
   const [activeIndex, setActiveIndex] = useState(0);
 const [reviews, setReviews] = useState([]);
+
+const touchStart = useRef({ x: 0, y: 0 });
+
+const handleTouchStart = (e) => {
+  touchStart.current = {
+    x: e.touches[0].clientX,
+    y: e.touches[0].clientY,
+  };
+};
+
+const handleTouchEnd = (e) => {
+  const deltaX = e.changedTouches[0].clientX - touchStart.current.x;
+  const deltaY = e.changedTouches[0].clientY - touchStart.current.y;
+
+  // Only change reviews for intentional horizontal swipes
+  if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX < 0) {
+      nextReview();
+    } else {
+      previousReview();
+    }
+  }
+};
 
   const nextReview = () => {
     setActiveIndex((current) => (current + 1) % reviews.length);
@@ -73,7 +96,11 @@ const [reviews, setReviews] = useState([]);
           </div>
         </div>
 
-        <div className="testimonial-slider">
+        <div
+  className="testimonial-slider"
+  onTouchStart={handleTouchStart}
+  onTouchEnd={handleTouchEnd}
+>
 
           <button
             className="review-arrow left-arrow"
@@ -149,13 +176,14 @@ const [reviews, setReviews] = useState([]);
         </div>
 
         <div className="testimonial-cta">
-          <a
-            href="#"
-            className="google-review-btn"
-          >
-            View All Google Reviews
-            <span>→</span>
-          </a>
+        <a
+  href="https://www.google.com/search?q=body+engineering+yoga+%26+fitness+studio&rlz=1C5CHFA_enAE1012AE1013&oq=body&gs_lcrp=EgZjaHJvbWUqBggBECMYJzIGCAAQRRg5MgYIARAjGCcyBggCEEUYOzIKCAMQABixAxiABDIKCAQQABixAxiABDIKCAUQABiABBi0BzIHCAYQLhiABDIKCAcQLhixAxiABDIKCAgQABixAxiABDIKCAkQABixAxiABNIBCTUxNzBqMGoxNagCCLACAQ&sourceid=chrome&source=chrome.rb&ie=UTF-8#mpd=~5462891928361395038/customers/reviews"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="google-review-btn"
+>
+  View All Google Reviews <span>→</span>
+</a>
         </div>
 
       </div>

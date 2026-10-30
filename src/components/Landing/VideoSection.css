@@ -3,7 +3,7 @@
     padding: 30px 5% 70px;
     background: #080808;
   }
-  
+
   .cinematic-video-wrap {
     position: relative;
     width: 100%;
@@ -14,7 +14,7 @@
     border-radius: 24px;
     border: 1px solid rgba(255, 60, 45, 0.25);
   }
-  
+
   .cinematic-video {
     position: absolute;
     inset: 0;
@@ -23,7 +23,7 @@
     object-fit: cover;
     background: #000;
   }
-  
+
   .cinematic-video-overlay {
     position: absolute;
     inset: 0;
@@ -35,7 +35,7 @@
         rgba(0, 0, 0, 0.12) 100%
       );
   }
-  
+
   .cinematic-video-content {
     position: relative;
     z-index: 2;
@@ -46,7 +46,7 @@
     justify-content: center;
     padding: 60px;
   }
-  
+
   .cinematic-eyebrow {
     font-size: 13px;
     font-weight: 700;
@@ -54,7 +54,7 @@
     color: #ff4438;
     margin-bottom: 16px;
   }
-  
+
   .cinematic-video-content h2 {
     margin: 0;
     font-size: clamp(38px, 5vw, 72px);
@@ -62,11 +62,11 @@
     font-weight: 900;
     color: white;
   }
-  
+
   .cinematic-video-content h2 span {
     color: #ff4438;
   }
-  
+
   .cinematic-video-content p {
     max-width: 520px;
     margin-top: 24px;
@@ -74,26 +74,26 @@
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.78);
   }
-  
+
   @media (max-width: 768px) {
     .cinematic-video-section {
       padding: 40px 16px;
     }
-  
+
     .cinematic-video-wrap
      {
       min-height: 600px;
     }
-  
+
     .cinematic-video-wrap {
       border-radius: 18px;
     }
-  
+
     .cinematic-video-content {
       justify-content: flex-end;
       padding: 32px 24px;
     }
-  
+
     .cinematic-video-overlay {
       background:
         linear-gradient(
@@ -103,7 +103,7 @@
           rgba(0, 0, 0, 0.15) 100%
         );
     }
-  
+
     .cinematic-video-content p {
       font-size: 15px;
     }
@@ -121,8 +121,36 @@
     cursor:pointer;
     transition:all 0.3s ease;
   }
-  
+
   .hero-cta-btn:hover{
     transform:translateY(-2px);
     box-shadow:0 10px 25px rgba(255,68,56,0.35);
+  }
+
+  .cinematic-video {
+    display: block;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  .cinematic-video {
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .cinematic-video-overlay {
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .cinematic-video-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-cta-btn {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+    touch-action: manipulation;
   }

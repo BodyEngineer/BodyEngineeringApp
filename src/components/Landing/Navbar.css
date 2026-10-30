@@ -3,512 +3,400 @@
 ========================================= */
 
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-  
-    width: 100%;
-    height: 80px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  
-    padding: 0 55px;
-  
-    background: rgba(5, 5, 5, 0.72);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  
-    z-index: 999;
-  }
-  
-  
-  /* =========================================
-     LOGO
-  ========================================= */
-  
-  .logo {
-    flex-shrink: 0;
-  
-    font-size: 27px;
-    font-weight: 900;
-  
-    color: #ffffff;
-  
-    letter-spacing: 1.5px;
-  
-    cursor: pointer;
-  
-    transition: 0.3s ease;
-  }
-  
-  .logo span {
-    color: #ff3b30;
-  }
-  
-  .logo:hover {
-    opacity: 0.9;
-  }
-  
-  
-  /* =========================================
-     CENTER NAVIGATION
-  ========================================= */
-  
-  .nav-links {
-    display: flex;
-    align-items: center;
-  
-    gap: 34px;
-  }
-  
-  .nav-links button {
-    position: relative;
-  
-    padding: 10px 0;
-  
-    background: transparent;
-  
-    border: none;
-    outline: none;
-  
-    color: #d8d8d8;
-  
-    font-family: inherit;
-  
-    font-size: 14px;
-    font-weight: 600;
-  
-    cursor: pointer;
-  
-    transition: 0.3s ease;
-  }
-  
-  
-  /* Premium underline */
-  
-  .nav-links button::after {
-    content: "";
-  
-    position: absolute;
-  
-    left: 50%;
-    bottom: 2px;
-  
-    width: 0;
-    height: 2px;
-  
-    background: #ff3b30;
-  
-    border-radius: 10px;
-  
-    transform: translateX(-50%);
-  
-    transition: 0.3s ease;
-  }
-  
-  .nav-links button:hover {
-    color: #ffffff;
-  }
-  
-  .nav-links button:hover::after {
-    width: 100%;
-  }
-  
-  
-  /* =========================================
-     RIGHT BUTTON GROUP
-  ========================================= */
-  
-  .nav-buttons {
-    display: flex;
-    align-items: center;
-  
-    gap: 10px;
-  }
-  
-  
-  /* =========================================
-     OWNER PORTAL
-  ========================================= */
-  
-  .owner-login-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  
-    padding: 11px 14px;
-  
-    background: rgba(255, 255, 255, 0.035);
-  
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 50px;
-  
-    color: #999999;
-  
-    font-family: inherit;
-  
-    font-size: 12px;
-    font-weight: 700;
-  
-    letter-spacing: 0.4px;
-  
-    cursor: pointer;
-  
-    transition: 0.3s ease;
-  }
-  
-  .owner-login-btn:hover {
-    color: #ffffff;
-  
-    border-color: rgba(255, 59, 48, 0.5);
-  
-    background: rgba(255, 59, 48, 0.07);
-  }
-  
-  
-  /* =========================================
-     MEMBER LOGIN — PREMIUM PORTAL BUTTON
-  ========================================= */
-  
-  .login-btn {
-    position: relative;
-  
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  
-    padding: 12px 22px;
-  
-    background:
-      linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.08),
-        rgba(255, 255, 255, 0.025)
-      );
-  
-    border: 1px solid rgba(255, 255, 255, 0.22);
-  
-    border-radius: 50px;
-  
-    color: #ffffff;
-  
-    font-family: inherit;
-  
-    font-size: 13px;
-    font-weight: 700;
-  
-    cursor: pointer;
-  
-    transition: 0.3s ease;
-  
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-  
-  .login-btn:hover {
-    transform: translateY(-2px);
-  
-    border-color: rgba(255, 59, 48, 0.8);
-  
-    background: rgba(255, 59, 48, 0.08);
-  
-    box-shadow:
-      0 8px 25px rgba(255, 59, 48, 0.15);
-  }
-  
-  
-  /* =========================================
-     JOIN NOW — PRIMARY CTA
-  ========================================= */
-  
-  .join-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  
-    padding: 13px 23px;
-  
-    border: none;
-    border-radius: 50px;
-  
-    background:
-      linear-gradient(
-        135deg,
-        #ff453a,
-        #e31b12
-      );
-  
-    color: #ffffff;
-  
-    font-family: inherit;
-  
-    font-size: 13px;
-    font-weight: 800;
-  
-    cursor: pointer;
-  
-    box-shadow:
-      0 8px 28px rgba(255, 45, 45, 0.32);
-  
-    transition: 0.3s ease;
-  }
-  
-  .join-btn:hover {
-    transform: translateY(-2px);
-  
-    box-shadow:
-      0 12px 35px rgba(255, 45, 45, 0.48);
-  }
-  
-  
-  /* =========================================
-     TABLET
-  ========================================= */
-  
-  @media (max-width: 1100px) {
-  
-    .navbar {
-      padding: 0 25px;
-    }
-  
-    .nav-links {
-      gap: 20px;
-    }
-  
-    .nav-links button {
-      font-size: 13px;
-    }
-  
-    .owner-login-btn {
-      display: none;
-    }
-  }
-  
-  
-  /* =========================================
-     MOBILE
-  ========================================= */
-  
-  @media (max-width: 800px) {
-  
-    .navbar {
-      height: 70px;
-  
-      padding: 0 18px;
-    }
-  
-    .logo {
-      font-size: 20px;
-    }
-  
-    .nav-links {
-      display: none;
-    }
-  
-    .owner-login-btn {
-      display: none;
-    }
-  
-    .login-btn {
-      padding: 10px 15px;
-  
-      font-size: 11px;
-    }
-  
-    .join-btn {
-      padding: 11px 16px;
-  
-      font-size: 11px;
-    }
-  }
-  
-  
-  /* =========================================
-     SMALL MOBILE
-  ========================================= */
-  
-  @media (max-width: 480px) {
-  
-    .logo {
-      font-size: 17px;
-    }
-  
-    .login-btn {
-      padding: 9px 12px;
-    }
-  
-    .join-btn {
-      padding: 10px 13px;
-    }
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+  padding: 0 28px;
 
-  /* =========================================
-   NAVBAR DESKTOP FIT FIX
-========================================= */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
 
-.navbar {
-    padding-left: 28px;
-    padding-right: 28px;
-    gap: 18px;
-  }
-  
-  .logo {
-    font-size: 23px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  .nav-links {
-    gap: 24px;
-    flex-shrink: 1;
-  }
-  
-  .nav-links button {
-    font-size: 13px;
-    white-space: nowrap;
-  }
-  
-  .nav-buttons {
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  
-  .owner-login-btn {
-    padding: 9px 11px;
-  }
-  
-  .login-btn {
-    padding: 11px 18px;
-    white-space: nowrap;
-  }
-  
-  .join-btn {
-    padding: 12px 18px;
-    white-space: nowrap;
-  }
+  background: rgba(5, 5, 5, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
-  /* =========================================
-   NAVBAR SOCIAL ICONS
-========================================= */
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  z-index: 999;
+}
+
+/* LOGO */
 
 .logo {
-    font-size: 26px;
-  }
-  
-  /* Social container */
-  
-  .nav-socials {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  /* Social buttons */
-  
-  .social-btn {
-    width: 36px;
-    height: 36px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    padding: 0;
-  
-    border-radius: 50%;
-  
-    background: rgba(255, 255, 255, 0.04);
-  
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  
-    color: #ffffff;
-  
-    font-size: 18px;
-    font-weight: 700;
-  
-    cursor: pointer;
-  
-    transition: 0.3s ease;
-  }
-  
-  .social-btn:hover {
-    transform: translateY(-2px);
-  }
-  
-  /* Instagram */
-  
-  .instagram-btn:hover {
-    color: #ff3b30;
-  
-    border-color: rgba(255, 59, 48, 0.7);
-  
-    box-shadow: 0 5px 20px rgba(255, 59, 48, 0.18);
-  }
-  
-  /* WhatsApp */
-  
-  .whatsapp-btn:hover {
-    color: #25d366;
-  
-    border-color: rgba(37, 211, 102, 0.7);
-  
-    box-shadow: 0 5px 20px rgba(37, 211, 102, 0.18);
-  }
-  
-  /* Owner portal */
-  
-  .owner-login-btn {
-    gap: 5px;
-  }
-  
-  /* Keep navbar compact on smaller laptops */
-  
-  @media (max-width: 1200px) {
-  
-    .logo {
-      font-size: 22px;
-    }
-  
-    .nav-links {
-      gap: 18px;
-    }
-  
-    .social-btn {
-      width: 32px;
-      height: 32px;
-  
-      font-size: 15px;
-    }
-  
-    .owner-login-btn span {
-      display: none;
-    }
-  }
-  
-  /* Hide socials on mobile */
-  
-  @media (max-width: 800px) {
-  
-    .nav-socials {
-      display: none;
-    }
+  flex-shrink: 0;
+  font-size: 23px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.logo span {
+  color: #ff3b30;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+/* DESKTOP NAVIGATION */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-shrink: 1;
+}
+
+.nav-links button {
+  position: relative;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  color: #d8d8d8;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.nav-links button::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 0;
+  height: 2px;
+  background: #ff3b30;
+  border-radius: 10px;
+  transform: translateX(-50%);
+  transition: 0.3s ease;
+}
+
+.nav-links button:hover {
+  color: #fff;
+}
+
+.nav-links button:hover::after {
+  width: 100%;
+}
+
+/* RIGHT BUTTON GROUP */
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* SOCIAL ICONS */
+
+.nav-socials {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.social-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.social-btn svg {
+  width: 19px;
+  height: 19px;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+}
+
+.instagram-btn:hover {
+  color: #ff3b30;
+  border-color: #ff3b30;
+}
+
+.whatsapp-btn:hover {
+  color: #25d366;
+  border-color: #25d366;
+}
+
+/* OWNER PORTAL */
+
+.owner-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50px;
+  color: #aaa;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.owner-login-btn:hover {
+  color: #fff;
+  border-color: #ff3b30;
+}
+
+/* MEMBER LOGIN */
+
+.login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.025)
+  );
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 50px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-btn:hover {
+  border-color: #ff3b30;
+  background: rgba(255,59,48,0.08);
+}
+
+/* JOIN NOW */
+
+.join-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg,#ff453a,#e31b12);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(255,45,45,0.32);
+  transition: 0.3s ease;
+}
+
+.join-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* HAMBURGER BUTTON — HIDDEN ON DESKTOP */
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 21px;
+  height: 2px;
+  border-radius: 5px;
+  background: #fff;
+  transition: 0.25s ease;
+}
+
+.menu-toggle.open span:first-child {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open span:last-child {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* TABLET */
+
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 0 20px;
+    gap: 12px;
   }
 
-  .social-btn svg {
-    width: 19px;
-    height: 19px;
-    display: block;
+  .logo {
+    font-size: 21px;
   }
-  
-  .instagram-btn:hover svg,
-  .whatsapp-btn:hover svg {
-    transform: scale(1.12);
+
+  .nav-links {
+    gap: 14px;
   }
-  
-  .social-btn svg {
-    transition: transform 0.25s ease;
+
+  .nav-links button {
+    font-size: 12px;
   }
+
+  .social-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .owner-login-btn {
+    padding: 8px 10px;
+  }
+}
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+@media (max-width: 800px) {
+
+  .navbar {
+    height: 70px;
+    padding: 0 16px;
+    gap: 10px;
+    justify-content: space-between;
+    overflow: visible;
+  }
+
+  .logo {
+    font-size: clamp(17px, 4.5vw, 21px);
+    letter-spacing: 0.5px;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  /* Closed menu */
+
+  .nav-links,
+  .nav-buttons {
+    display: none;
+  }
+
+  /* Open navigation links */
+
+  .navbar.menu-open .nav-links {
+    display: flex;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 20px 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #080808;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    z-index: 1000;
+  }
+
+  .navbar.menu-open .nav-links button {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 5px;
+    text-align: left;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .navbar.menu-open .nav-links button::after {
+    display: none;
+  }
+
+  /* Open navigation buttons */
+
+  .navbar.menu-open .nav-buttons {
+    display: flex;
+    position: absolute;
+    top: 258px;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 20px 22px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    background: rgba(8,8,8,0.98);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    z-index: 1000;
+  }
+
+  .navbar.menu-open .nav-socials {
+    display: none;
+  }
+
+  .navbar.menu-open .owner-login-btn,
+  .navbar.menu-open .login-btn,
+  .navbar.menu-open .join-btn {
+    display: flex;
+    width: 100%;
+    min-height: 46px;
+    box-sizing: border-box;
+    justify-content: center;
+    font-size: 14px;
+  }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 360px) {
+  .navbar {
+    padding: 0 11px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+  }
+}

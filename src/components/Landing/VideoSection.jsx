@@ -79,20 +79,23 @@ export default function VideoSection() {
   return (
     <section className="cinematic-video-section">
       <div className="cinematic-video-wrap">
-        <video
-          key={heroVideoUrl}
-          className="cinematic-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-        >
-          <source
-            src={heroVideoUrl}
-            type="video/mp4"
-          />
-        </video>
+      <video
+  key={heroVideoUrl}
+  className="cinematic-video"
+  autoPlay
+  muted
+  loop
+  playsInline
+  webkit-playsinline="true"
+  preload="auto"
+  onCanPlay={(e) => {
+    e.currentTarget.play().catch((error) => {
+      console.log("Mobile autoplay blocked:", error);
+    });
+  }}
+>
+  <source src={heroVideoUrl} type="video/mp4" />
+</video>
 
         <div className="cinematic-video-overlay" />
 
