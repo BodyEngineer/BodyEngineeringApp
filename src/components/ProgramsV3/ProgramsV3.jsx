@@ -57,17 +57,20 @@ export default function ProgramsV3() {
           >
             <div className="program-image">
               {program.video_url ? (
-                <video
-                  className="program-workout-video"
-                  src={program.video_url}
-                  poster={program.image_url || undefined}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-label={`${program.title} workout video`}
-                />
+              <video
+              className="program-workout-video"
+              src={program.video_url}
+              poster={program.image_url || undefined}
+              autoPlay
+              muted
+              defaultMuted
+              loop
+              playsInline
+              controls={false}
+              disablePictureInPicture
+              preload="metadata"
+              aria-label={`${program.title} workout video`}
+            />
               ) : (
                 <img
                   src={program.image_url}
