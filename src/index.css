@@ -4829,3 +4829,101 @@ textarea{
     font-size: 14px;
   }
 }
+
+/* MEMBERSHIP STATUS */
+
+.status-pill.status-active {
+  background: #16a34a;
+  color: #ffffff;
+  border: 1px solid #22c55e;
+}
+
+.status-pill.status-expired {
+  background: #dc2626;
+  color: #ffffff;
+  border: 1px solid #ef4444;
+}
+
+/* MEMBERSHIP RENEWAL CARD */
+
+.renewal-card {
+  position: relative;
+  padding: 28px;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #171717, #242424);
+  border: 1px solid #444;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.renewal-card.renewal-expired {
+  border: 1px solid rgba(255, 68, 68, 0.7);
+  box-shadow: 0 8px 28px rgba(255, 40, 40, 0.12);
+}
+
+.renewal-card.renewal-active {
+  border: 1px solid rgba(255, 152, 0, 0.6);
+}
+
+.renewal-card-title {
+  margin: 0 0 14px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.renewal-card p {
+  color: #ddd;
+  line-height: 1.6;
+}
+
+/* RENEWAL PAYMENT LAYOUT */
+
+.renewal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: start;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.renewal-details {
+  min-width: 0;
+}
+
+.renewal-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.renewal-qr-image {
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+@media (max-width: 700px) {
+  .renewal-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .renewal-qr {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .renewal-qr-image {
+    width: 160px;
+  }
+}
