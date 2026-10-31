@@ -16,29 +16,25 @@ export default function ProgramsV3() {
       .eq("is_active", true)
       .order("display_order", { ascending: true });
 
-    if (!error) {
-      setPrograms(data || []);
+    if (error) {
+      console.error("Could not load programs:", error);
+      return;
     }
+
+    setPrograms(data || []);
   };
 
   const goToConsultation = () => {
-    const section = document.getElementById("consultation");
-
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    document.getElementById("consultation")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   return (
     <section className="programs-v3" id="programs">
       <div className="programs-header">
-
-        <span className="program-tag">
-          CHOOSE YOUR PATH
-        </span>
+        <span className="program-tag">CHOOSE YOUR PATH</span>
 
         <h2>
           Programs Built For
@@ -47,33 +43,41 @@ export default function ProgramsV3() {
 
         <p>
           Every transformation starts with the right strategy.
-          Choose the program that perfectly matches your goal.
+          Choose the program that matches your goals.
         </p>
-
       </div>
 
       <div className="programs-wrapper">
-
         {programs.map((program, index) => (
-
           <div
             key={program.id}
             className={`program-showcase ${
               index % 2 !== 0 ? "reverse" : ""
             }`}
           >
-
             <div className="program-image">
-
-              <img
-                src={program.image_url}
-                alt={program.title}
-              />
-
+              {program.video_url ? (
+                <video
+                  className="program-workout-video"
+                  src={program.video_url}
+                  poster={program.image_url || undefined}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={`${program.title} workout video`}
+                />
+              ) : (
+                <img
+                  src={program.image_url}
+                  alt={`${program.title} program`}
+                  loading="lazy"
+                />
+              )}
             </div>
 
             <div className="glass-card">
-
               <div className="program-number">
                 {String(index + 1).padStart(2, "0")}
               </div>
@@ -89,27 +93,24 @@ export default function ProgramsV3() {
               </p>
 
               <div className="feature-grid">
+                {[1, 2, 3, 4].map((number) => {
+                  const feature = program[`feature${number}`];
 
-                <div>✔ Personalized Coaching</div>
-                <div>✔ Nutrition Guidance</div>
-                <div>✔ Progress Tracking</div>
-                <div>✔ Weekly Support</div>
-
+                  return feature ? (
+                    <div key={number}>✔ {feature}</div>
+                  ) : null;
+                })}
               </div>
 
               <button
                 className="consult-btn"
                 onClick={goToConsultation}
               >
-                Book Consultation →
+                {program.button_text || "Book Consultation"} →
               </button>
-
             </div>
-
           </div>
-
         ))}
-
       </div>
     </section>
   );

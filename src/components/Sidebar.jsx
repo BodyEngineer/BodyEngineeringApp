@@ -75,6 +75,15 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
+        <button
+  type="button"
+  className="nav-link nav-link-logout sidebar-mobile-logout"
+  onClick={handleSignOut}
+>
+  <LogOut size={20} />
+  <span>Sign Out</span>
+</button>
+
         <nav className="sidebar-nav">
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink

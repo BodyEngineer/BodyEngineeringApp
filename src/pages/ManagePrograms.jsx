@@ -2,61 +2,20 @@ import "./ManagePrograms.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-
+const IMAGE_BUCKET = "program-images";
+const VIDEO_BUCKET = "website-media";
 
 export default function ManagePrograms() {
   const [programs, setPrograms] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [removeVideo, setRemoveVideo] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchPrograms();
   }, []);
-
-  const saveProgram = async () => {
-
-    let imageUrl = selectedProgram.image_url;
-
-if (selectedImage) {
-  const fileName = `${Date.now()}-${selectedImage.name}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from("program-images")
-    .upload(fileName, selectedImage);
-
-  if (uploadError) {
-    alert("Image upload failed");
-    return;
-  }
-
-  const { data } = supabase.storage
-    .from("program-images")
-    .getPublicUrl(fileName);
-
-  imageUrl = data.publicUrl;
-}
-    const { error } = await supabase
-      .from("website_programs")
-      .update({
-        title: selectedProgram.title,
-        short_description: selectedProgram.short_description,
-        description: selectedProgram.description,
-        feature1: selectedProgram.feature1,
-        feature2: selectedProgram.feature2,
-        feature3: selectedProgram.feature3,
-        feature4: selectedProgram.feature4,
-        image_url: imageUrl,
-      })
-      .eq("id", selectedProgram.id);
-  
-    if (!error) {
-      fetchPrograms();
-      setSelectedProgram(null);
-      alert("Program updated successfully!");
-    } else {
-      console.log(error);
-    }
-  };
 
   const fetchPrograms = async () => {
     const { data, error } = await supabase
@@ -64,14 +23,117 @@ if (selectedImage) {
       .select("*")
       .order("display_order", { ascending: true });
 
-    if (!error) {
-      setPrograms(data || []);
-    } else {
-      console.log(error);
+    if (error) {
+      console.error("Could not fetch programs:", error);
+      return;
     }
+
+    setPrograms(data || []);
   };
 
-  
+  const openEditor = (program) => {
+    setSelectedProgram({ ...program });
+    setSelectedImage(null);
+    setSelectedVideo(null);
+    setRemoveVideo(false);
+  };
+
+  const closeEditor = () => {
+    setSelectedProgram(null);
+    setSelectedImage(null);
+    setSelectedVideo(null);
+    setRemoveVideo(false);
+  };
+
+  const updateField = (field, value) => {
+    setSelectedProgram((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
+  };
+
+  const saveProgram = async () => {
+    if (!selectedProgram || saving) return;
+
+    setSaving(true);
+
+    try {
+      let imageUrl = selectedProgram.image_url || null;
+      let videoUrl = selectedProgram.video_url || null;
+
+      // Upload new program image
+      if (selectedImage) {
+        const imageName = `${Date.now()}-${selectedImage.name.replace(
+          /[^a-zA-Z0-9._-]/g,
+          "-"
+        )}`;
+
+        const { error: imageError } = await supabase.storage
+          .from(IMAGE_BUCKET)
+          .upload(imageName, selectedImage);
+
+        if (imageError) throw imageError;
+
+        const { data: imageData } = supabase.storage
+          .from(IMAGE_BUCKET)
+          .getPublicUrl(imageName);
+
+        imageUrl = imageData.publicUrl;
+      }
+
+      // Upload new workout video
+      if (selectedVideo) {
+        const videoName = `programs/${selectedProgram.id}/${Date.now()}-${selectedVideo.name.replace(
+          /[^a-zA-Z0-9._-]/g,
+          "-"
+        )}`;
+
+        const { error: videoError } = await supabase.storage
+          .from(VIDEO_BUCKET)
+          .upload(videoName, selectedVideo);
+
+        if (videoError) throw videoError;
+
+        const { data: videoData } = supabase.storage
+          .from(VIDEO_BUCKET)
+          .getPublicUrl(videoName);
+
+        videoUrl = videoData.publicUrl;
+      }
+
+      if (removeVideo) {
+        videoUrl = null;
+      }
+
+      // Save program information
+      const { error } = await supabase
+        .from("website_programs")
+        .update({
+          title: selectedProgram.title,
+          short_description: selectedProgram.short_description,
+          description: selectedProgram.description,
+          feature1: selectedProgram.feature1,
+          feature2: selectedProgram.feature2,
+          feature3: selectedProgram.feature3,
+          feature4: selectedProgram.feature4,
+          image_url: imageUrl,
+          video_url: videoUrl,
+        })
+        .eq("id", selectedProgram.id);
+
+      if (error) throw error;
+
+      await fetchPrograms();
+      closeEditor();
+
+      alert("Program updated successfully!");
+    } catch (error) {
+      console.error("Program update failed:", error);
+      alert(error.message || "Could not update program. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="programs-admin">
@@ -81,159 +143,175 @@ if (selectedImage) {
 
       {programs.map((program) => (
         <div key={program.id} className="program-card">
+          <img
+            src={program.image_url || ""}
+            alt={program.title}
+            className="program-image"
+          />
 
-        <img
-          src={program.image_url}
-          alt={program.title}
-          className="program-image"
-        />
-      
-        <div className="program-info">
-      
-          <h3>{program.title}</h3>
-      
-          <p>{program.short_description}</p>
-      
-          <div className="program-actions">
-      
-          <button
-  className="edit-btn"
-  onClick={() => setSelectedProgram(program)}
->
-  Edit Program
-</button>
-      
+          <div className="program-info">
+            <h3>{program.title}</h3>
+            <p>{program.short_description}</p>
+
+            <div className="program-actions">
+              <button
+                className="edit-btn"
+                onClick={() => openEditor(program)}
+              >
+                Edit Program
+              </button>
+            </div>
           </div>
-      
         </div>
-      
-      </div>
       ))}
 
-{selectedProgram && (
-  <div className="edit-modal">
-    <div className="edit-box">
+      {selectedProgram && (
+        <div className="edit-modal">
+          <div className="edit-box">
+            <h2>Edit Program</h2>
 
-      <h2>{selectedProgram.title}</h2>
+            <input
+              type="text"
+              value={selectedProgram.title || ""}
+              onChange={(e) => updateField("title", e.target.value)}
+              placeholder="Program Title"
+            />
 
-      <button
-        onClick={() => setSelectedProgram(null)}
-      >
-        Close
-      </button>
+            <textarea
+              value={selectedProgram.short_description || ""}
+              onChange={(e) =>
+                updateField("short_description", e.target.value)
+              }
+              placeholder="Short Description"
+            />
 
-    </div>
-  </div>
-)}
+            <textarea
+              value={selectedProgram.description || ""}
+              onChange={(e) =>
+                updateField("description", e.target.value)
+              }
+              placeholder="Program Description"
+            />
 
-{selectedProgram && (
-  <div className="edit-modal">
-    <div className="edit-box">
+            {[1, 2, 3, 4].map((number) => (
+              <input
+                key={number}
+                type="text"
+                placeholder={`Feature ${number}`}
+                value={selectedProgram[`feature${number}`] || ""}
+                onChange={(e) =>
+                  updateField(`feature${number}`, e.target.value)
+                }
+              />
+            ))}
 
-      <h2>Edit Program</h2>
+            <div className="program-media-upload">
+              <h3>Program Image</h3>
 
-      <input
-        type="text"
-        value={selectedProgram.title}
-        onChange={(e) =>
-          setSelectedProgram({
-            ...selectedProgram,
-            title: e.target.value,
-          })
-        }
-      />
+              {selectedProgram.image_url && (
+                <img
+                  src={selectedProgram.image_url}
+                  alt="Current program"
+                  className="admin-media-preview"
+                />
+              )}
 
-      <textarea
-        value={selectedProgram.short_description}
-        onChange={(e) =>
-          setSelectedProgram({
-            ...selectedProgram,
-            short_description: e.target.value,
-          })
-        }
-      />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setSelectedImage(e.target.files?.[0] || null)
+                }
+              />
 
-<textarea
-  value={selectedProgram.description || ""}
-  onChange={(e) =>
-    setSelectedProgram({
-      ...selectedProgram,
-      description: e.target.value,
-    })
-  }
-/>
+              {selectedImage && (
+                <p>Selected image: {selectedImage.name}</p>
+              )}
+            </div>
 
-<input
-  type="text"
-  placeholder="Feature 1"
-  value={selectedProgram.feature1 || ""}
-  onChange={(e) =>
-    setSelectedProgram({
-      ...selectedProgram,
-      feature1: e.target.value,
-    })
-  }
-/>
+            <div className="program-media-upload">
+              <h3>Workout Video</h3>
 
-<input
-  type="text"
-  placeholder="Feature 2"
-  value={selectedProgram.feature2 || ""}
-  onChange={(e) =>
-    setSelectedProgram({
-      ...selectedProgram,
-      feature2: e.target.value,
-    })
-  }
-/>
+              {selectedVideo ? (
+                <video
+                  className="admin-media-preview"
+                  src={URL.createObjectURL(selectedVideo)}
+                  controls
+                  playsInline
+                />
+              ) : selectedProgram.video_url && !removeVideo ? (
+                <video
+                  className="admin-media-preview"
+                  src={selectedProgram.video_url}
+                  controls
+                  playsInline
+                />
+              ) : (
+                <p className="no-video-message">
+                  No workout video selected.
+                </p>
+              )}
 
-<input
-  type="text"
-  placeholder="Feature 3"
-  value={selectedProgram.feature3 || ""}
-  onChange={(e) =>
-    setSelectedProgram({
-      ...selectedProgram,
-      feature3: e.target.value,
-    })
-  }
-/>
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
 
-<input
-  type="text"
-  placeholder="Feature 4"
-  value={selectedProgram.feature4 || ""}
-  onChange={(e) =>
-    setSelectedProgram({
-      ...selectedProgram,
-      feature4: e.target.value,
-    })
-  }
-/>
+                  if (!file) return;
 
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => setSelectedImage(e.target.files[0])}
-/>
+                  if (!file.type.startsWith("video/")) {
+                    alert("Please select a valid video file.");
+                    return;
+                  }
 
-<button
-  className="save-btn"
-  onClick={saveProgram}
->
-  Save Changes
-</button>
+                  setSelectedVideo(file);
+                  setRemoveVideo(false);
+                }}
+              />
 
-      <button
-      className="edit-btn"
-        onClick={() => setSelectedProgram(null)}
-      >
-        Close
-      </button>
+              {selectedVideo && (
+                <p>New video: {selectedVideo.name}</p>
+              )}
 
-    </div>
-  </div>
-)}
+              {selectedProgram.video_url && !removeVideo && (
+                <button
+                  type="button"
+                  className="remove-video-btn"
+                  onClick={() => {
+                    setSelectedVideo(null);
+                    setRemoveVideo(true);
+                  }}
+                >
+                  Remove Existing Video
+                </button>
+              )}
+
+              {removeVideo && (
+                <p className="no-video-message">
+                  Existing video will be removed from this program when saved.
+                </p>
+              )}
+            </div>
+
+            <button
+              className="save-btn"
+              onClick={saveProgram}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+
+            <button
+              className="edit-btn"
+              onClick={closeEditor}
+              disabled={saving}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

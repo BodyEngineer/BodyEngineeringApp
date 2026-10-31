@@ -312,12 +312,30 @@
     display: flex;
   }
 
-  /* Closed menu */
+  /* Mobile navigation closed state */
 
-  .nav-links,
-  .nav-buttons {
-    display: none;
-  }
+.nav-links {
+  display: none;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.nav-socials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-buttons > .owner-login-btn,
+.nav-buttons > .login-btn,
+.nav-buttons > .join-btn {
+  display: none;
+}
 
   /* Open navigation links */
 
@@ -369,7 +387,9 @@
   }
 
   .navbar.menu-open .nav-socials {
-    display: none;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
   }
 
   .navbar.menu-open .owner-login-btn,
@@ -398,5 +418,21 @@
   .menu-toggle {
     width: 40px;
     height: 40px;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-socials {
+    gap: 5px;
+  }
+
+  .social-btn {
+    width: 29px;
+    height: 29px;
+  }
+
+  .social-btn svg {
+    width: 16px;
+    height: 16px;
   }
 }
