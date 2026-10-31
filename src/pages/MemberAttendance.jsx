@@ -429,7 +429,10 @@ export default function MemberAttendance() {
           {message && (
             <button
               type="button"
-              onClick={() => navigate("/member-dashboard")}
+              onClick={() => {
+                console.log("Back to Dashboard clicked");
+                navigate("/member-dashboard");
+              }}
               style={{
                 width: "100%",
                 marginTop: "25px",
