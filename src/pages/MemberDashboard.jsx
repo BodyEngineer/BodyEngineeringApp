@@ -8,6 +8,7 @@ export default function MemberDashboard() {
   const [memberType, setMemberType] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [checkedInToday, setCheckedInToday] = useState(false);
+const [checkedOutToday, setCheckedOutToday] = useState(false);
   const [showAttendanceHistory, setShowAttendanceHistory] = useState(false);
   const [assessment, setAssessment] = useState(null);
   const [websiteSettings, setWebsiteSettings] = useState(null);
@@ -154,15 +155,29 @@ setQrImageUrl(qrData?.signedUrl || "");
       } else {
         setAttendance(attendanceData || []);
 
-        const today = new Date().toDateString();
-
-        const checkedToday =
-          attendanceData?.some(
-            (item) =>
-              new Date(item.check_in).toDateString() === today
-          ) || false;
-
-        setCheckedInToday(checkedToday);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const todaySessions = (attendanceData || []).filter((item) => {
+          const checkIn = new Date(item.check_in);
+        
+          return checkIn >= today && checkIn < tomorrow;
+        });
+        
+        const latestTodaySession = todaySessions[0] || null;
+        
+        const openSession = todaySessions.find(
+          (item) => !item.check_out
+        );
+        
+        setCheckedInToday(Boolean(latestTodaySession));
+        
+        setCheckedOutToday(
+          Boolean(latestTodaySession && !openSession)
+        );
       }
     }
 
@@ -316,26 +331,25 @@ const handlePaymentSubmit = async () => {
     );
   }
 
-  const today = new Date();
-
-// Gym members use membership_end.
-// Online clients use expiry_date.
-const membershipExpiry =
+  const membershipExpiry =
   memberType === "online"
     ? member.expiry_date
     : member.membership_end;
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 const expiry = membershipExpiry
-  ? new Date(membershipExpiry)
+  ? new Date(`${membershipExpiry}T00:00:00`)
   : null;
 
 const daysRemaining = expiry
-  ? Math.ceil(
-      (expiry - today) / (1000 * 60 * 60 * 24)
-    )
+  ? Math.round((expiry - today) / (1000 * 60 * 60 * 24))
   : 0;
 
 const isExpired = !expiry || daysRemaining < 0;
+
+const displayDays = Math.abs(daysRemaining);
 
 const showRenewalCard = true;
 
@@ -405,15 +419,27 @@ const showRenewalCard = true;
 
   <div className="hero-right">
 
-    <div className="status-pill">
-      {daysRemaining > 0 ? "🟢 ACTIVE" : "🔴 EXPIRED"}
-    </div>
+  <div
+  className={`status-pill ${
+    isExpired ? "status-expired" : "status-active"
+  }`}
+>
+  {isExpired ? "🔴 MEMBERSHIP EXPIRED" : "🟢 ACTIVE"}
+</div>
 
     <div className="days-box">
 
-      <h1>{daysRemaining}</h1>
+    <h1>
+  {expiry ? displayDays : "—"}
+</h1>
 
-      <p>Days Remaining</p>
+<p>
+  {!expiry
+    ? "Renewal Required"
+    : isExpired
+    ? "Days Expired"
+    : "Days Remaining"}
+</p>
 
     </div>
 
@@ -444,16 +470,20 @@ const showRenewalCard = true;
       </span>
 
       <h2>
-        {checkedInToday
-          ? "You're checked in today! 🎉"
-          : "Mark Today's Attendance"}
+      {!checkedInToday
+  ? "Mark Today's Attendance"
+  : checkedOutToday
+  ? "You've completed today's workout! 🎉"
+  : "You're checked in today! 🎉"}
       </h2>
 
       <p>
-        {checkedInToday
-          ? "Great job! Keep your consistency going."
-          : "Scan the gym QR code to record your workout visit."}
-      </p>
+  {!checkedInToday
+    ? "Scan the gym QR code to record your workout visit."
+    : checkedOutToday
+    ? "Great work today! Your check-out has been recorded."
+    : "Your check-in is recorded. Scan the QR code again when leaving the gym."}
+</p>
     </div>
 
   </div>
@@ -461,42 +491,39 @@ const showRenewalCard = true;
   <button
   className="attendance-btn"
   onClick={() => {
-    if (checkedInToday) {
-      document
-        .getElementById("attendance-history")
-        ?.scrollIntoView({
+    if (checkedInToday && checkedOutToday) {
+      setShowAttendanceHistory(true);
+  
+      setTimeout(() => {
+        const historyPanel = document.getElementById("attendance-history");
+  
+        historyPanel?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
+      }, 200);
     } else {
       navigate("/member-attendance");
     }
   }}
 >
-  {checkedInToday
+  {!checkedInToday
+    ? "📷 Scan QR to Check In →"
+    : checkedOutToday
     ? "View Attendance →"
-    : "📷 Scan QR Code →"}
+    : "📷 Scan QR to Check Out →"}
 </button>
 
 </div>
 
 {showRenewalCard && websiteSettings && (
-  <div
-    style={{
-      background: "#111",
-      border: isExpired
-        ? "1px solid #ff4444"
-        : "1px solid #ff8c00",
-      borderRadius: "20px",
-      padding: "24px",
-      marginBottom: "24px",
-    }}
-  >
-    <h2>
-      {isExpired
-        ? "🚨 Membership Expired"
-        : "⚠️ Membership Renewal"}
-    </h2>
+  <div className={`renewal-card ${isExpired ? "renewal-expired" : "renewal-active"}`}>
+  
+  <h2 className="renewal-card-title">
+  {isExpired
+    ? "🚨 Your Membership Has Expired"
+    : "⚠️ Keep Your Fitness Journey Going!"}
+</h2>
 
     <p>
       {isExpired
@@ -506,19 +533,10 @@ const showRenewalCard = true;
         : `Your membership expires in ${daysRemaining} days.`}
     </p>
 
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: "30px",
-        flexWrap: "wrap",
-        marginTop: "20px",
-      }}
-    >
+    <div className="renewal-layout">
       {/* PAYMENT DETAILS */}
 
-      <div style={{ flex: 1, minWidth: "260px" }}>
+      <div className="renewal-details">
         <p>
           <strong>Plan:</strong>{" "}
           {member.membership_type}
@@ -687,7 +705,9 @@ const showRenewalCard = true;
             ? "Uploading..."
             : paymentRequest?.status === "pending"
             ? "⏳ Verification Pending"
-            : "💳 Submit Payment"}
+            : isExpired
+  ? "🔴 Renew Membership Now"
+  : "💳 Renew Membership"}
         </button>
 
         {/* MESSAGE */}
@@ -750,26 +770,17 @@ const showRenewalCard = true;
 {/* QR CODE */}
 
 {qrImageUrl && (
-  <div
-    style={{
-      textAlign: "center",
-      minWidth: "200px",
-    }}
-  >
+  <div className="renewal-qr">
+
     <p>
       <strong>Scan & Pay</strong>
     </p>
 
-    <img
-      src={qrImageUrl}
-      alt="Payment QR"
-      style={{
-        width: "180px",
-        background: "#fff",
-        padding: "10px",
-        borderRadius: "12px",
-      }}
-    />
+   <img
+  src={qrImageUrl}
+  alt="Payment QR"
+  className="renewal-qr-image"
+/>
   </div>
 )}
     </div>
@@ -1042,6 +1053,7 @@ const showRenewalCard = true;
 
 {showAttendanceHistory && (
   <div
+    id="attendance-history"
     className="attendance-history-panel"
     style={{
       marginTop: "20px",
