@@ -12,6 +12,7 @@ const initialForm = {
   membership_type: 'monthly',
   membership_start: new Date().toISOString().split('T')[0],
   membership_end: '',
+  batch_timing: '',
   notes: ''
 }
 
@@ -29,6 +30,7 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
         membership_type: member.membership_type || 'monthly',
         membership_start: member.membership_start || initialForm.membership_start,
         membership_end: member.membership_end || '',
+        batch_timing: member.batch_timing || '',
         notes: member.notes || '',
       })
     }
@@ -129,6 +131,15 @@ export default function MemberForm({ member, onSubmit, loading, submitLabel = 'S
           value={form.membership_end}
           onChange={handleChange}
         />
+        <Input
+  label="Batch Timing"
+  name="batch_timing"
+  value={form.batch_timing}
+  onChange={handleChange}
+  placeholder="e.g. 6:00 AM - 7:00 AM"
+/>
+
+
       </div>
 
       <div className="form-group">

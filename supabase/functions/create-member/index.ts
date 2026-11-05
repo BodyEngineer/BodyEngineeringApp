@@ -30,6 +30,7 @@ serve(async (req) => {
       membership_type,
       membership_start,
       membership_end,
+      batch_timing,
       notes,
       goal,
       package_type,
@@ -75,6 +76,7 @@ serve(async (req) => {
           membership_type,
           membership_start,
           membership_end,
+          batch_timing,
           notes,
         });
     

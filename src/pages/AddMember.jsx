@@ -34,6 +34,7 @@ export default function AddMember() {
             membership_type: form.membership_type,
             membership_start: form.membership_start,
             membership_end: form.membership_end,
+            batch_timing: form.batch_timing.trim(),
             notes: form.notes.trim(),
           },
         }

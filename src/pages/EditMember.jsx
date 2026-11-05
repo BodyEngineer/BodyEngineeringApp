@@ -83,8 +83,8 @@ export default function EditMember() {
         membership_type: form.membership_type,
         membership_start: form.membership_start,
         membership_end: form.membership_end,
+        batch_timing: form.batch_timing.trim() || null,
         notes: form.notes.trim() || null,
-        profile_photo: profilePhotoUrl,
       })
       .eq("id", id);
 
