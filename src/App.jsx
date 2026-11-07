@@ -47,6 +47,7 @@ import OwnerOnlinePerformance from "./pages/OwnerOnlinePerformance";
 import OnlineAssessment from "./pages/OnlineAssessment";
 import OnlineTransformationTimeline from "./pages/OnlineTransformationTimeline";
 import PaymentHistory from "./pages/PaymentHistory"
+import Notification from "./pages/Notification";
 
 
 export default function App() {
@@ -274,6 +275,11 @@ export default function App() {
             <Route
   path="/payment-history"
   element={<PaymentHistory />}
+/>
+
+<Route
+  path="/notification"
+  element={<Notification />}
 />
 
 <Route

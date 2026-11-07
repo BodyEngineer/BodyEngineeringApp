@@ -12,6 +12,7 @@ import {
   Globe,
   Settings,
   CreditCard,
+  Megaphone,
 } from 'lucide-react'
 
 import Logo from './Logo'
@@ -19,6 +20,12 @@ import { useAuth } from '../context/AuthContext'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+
+  {
+    to: '/notification',
+    icon: Megaphone,
+    label: 'Notifications',
+  },
 
   { to: '/members', icon: Users, label: 'Members' },
 

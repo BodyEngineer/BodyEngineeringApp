@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import EnableNotifications from '../components/EnableNotifications'
 
 
 export default function MemberDashboard() {
@@ -959,6 +960,10 @@ const showRenewalCard = true;
     {/* =========================
         ATTENDANCE
     ========================= */}
+
+{memberType === 'gym' && (
+  <EnableNotifications memberType={memberType} />
+)}
 
 <div
   className="coaching-card"
