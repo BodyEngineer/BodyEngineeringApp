@@ -234,33 +234,7 @@ export default function EnableNotifications({ memberType }) {
             </button>
           )}
         </div>
-        <button
-  type="button"
-  className="btn btn-primary"
-  style={{ marginTop: '12px' }}
-  onClick={async () => {
-    try {
-      const registration =
-        await navigator.serviceWorker.ready
-
-      await registration.showNotification(
-        'Body Engineering Test',
-        {
-          body: 'Your iPhone notification display is working!',
-          icon: '/pwa-192x192.png',
-          badge: '/pwa-192x192.png',
-        }
-      )
-
-      setMessage('Local notification test triggered.')
-    } catch (error) {
-      console.error('Local notification test:', error)
-      setMessage(error.message)
-    }
-  }}
->
-  Test Notification Display
-</button>
+     
         {message && (
           <p
             role="status"
