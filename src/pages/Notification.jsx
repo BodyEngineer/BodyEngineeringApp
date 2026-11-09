@@ -25,34 +25,48 @@ export default function Notifications() {
   const [history, setHistory] = useState([])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [editingId, setEditingId] = useState(null)
+  const [updating, setUpdating] = useState(false)
 
   const loadHistory = useCallback(async () => {
     try {
       setLoadingHistory(true)
-
+      setError('')
+  
       const { data: authData, error: authError } =
         await supabase.auth.getUser()
-
+  
       if (authError) throw authError
-
+  
       const user = authData?.user
-
+  
       if (!user) {
         throw new Error('Please log in again.')
       }
+  
+      // Auth UID matches owner_id in studio_notifications
+      const ownerId = user.id
+  
+      console.log('LOGGED IN USER ID:', user.id)
+      console.log('HISTORY OWNER ID:', ownerId)
 
       const { data, error: historyError } = await supabase
         .from('studio_notifications')
         .select(
           'id, message, recipient_count, success_count, failure_count, status, created_at, sent_at'
         )
-        .eq('owner_id', user.id)
+        .eq('owner_id', ownerId)
         .order('created_at', { ascending: false })
         .limit(50)
-
-      if (historyError) throw historyError
-
-      setHistory(data || [])
+  
+        console.log('NOTIFICATION HISTORY DATA:', data)
+        console.log('NOTIFICATION HISTORY ERROR:', historyError)
+        console.log('NOTIFICATION HISTORY COUNT:', data?.length)
+        
+        if (historyError) throw historyError
+        
+        setHistory(data || [])
+  
     } catch (err) {
       console.error('Notification history error:', err)
       setError(err.message || 'Unable to load notification history.')
@@ -64,6 +78,63 @@ export default function Notifications() {
   useEffect(() => {
     loadHistory()
   }, [loadHistory])
+
+  const handleEdit = (item) => {
+    if (item.status !== 'pending') return
+  
+    setEditingId(item.id)
+    setMessage(item.message)
+    setError('')
+    setSuccess('')
+  
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+  
+    const updatedMessage = message.trim()
+  
+    if (!editingId || !updatedMessage) {
+      setError('Please enter an announcement.')
+      return
+    }
+  
+    try {
+      setUpdating(true)
+  
+      const { data, error: updateError } = await supabase
+        .from('studio_notifications')
+        .update({ message: updatedMessage })
+        .eq('id', editingId)
+        .eq('status', 'pending')
+        .select('id')
+  
+      if (updateError) throw updateError
+  
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Announcement could not be updated. It may no longer be pending.'
+        )
+      }
+  
+      setSuccess('Announcement updated successfully.')
+      setEditingId(null)
+      setMessage('')
+  
+      await loadHistory()
+    } catch (err) {
+      console.error('Update announcement error:', err)
+      setError(err.message || 'Unable to update announcement.')
+    } finally {
+      setUpdating(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -228,7 +299,7 @@ export default function Notifications() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={editingId ? handleUpdate : handleSubmit}>
               <div className="ne-field">
                 <div className="ne-field-heading">
                   <label htmlFor="announcement-message">
@@ -246,7 +317,7 @@ export default function Notifications() {
                   rows={7}
                   maxLength={1000}
                   required
-                  disabled={sending}
+                  disabled={sending || updating}
                 />
 
                 <p className="ne-helper-text">
@@ -300,23 +371,58 @@ export default function Notifications() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="ne-send-button"
-                disabled={sending || !message.trim()}
-              >
-                {sending ? (
-                  <>
-                    <RefreshCw className="ne-spinning" size={19} />
-                    Sending Announcement...
-                  </>
-                ) : (
-                  <>
-                    <Send size={19} />
-                    Send Announcement
-                  </>
-                )}
-              </button>
+<button
+  type="submit"
+  disabled={sending || updating}
+  style={{
+    width: '100%',
+    padding: '14px',
+    border: 'none',
+    borderRadius: '12px',
+    background: '#ff4438',
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: '15px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    opacity: sending || updating ? 0.7 : 1,
+  }}
+>
+  {editingId ? (
+    <>
+      <CheckCircle2 size={19} />
+      {updating ? 'Updating Announcement...' : 'Update Announcement'}
+    </>
+  ) : sending ? (
+    <>
+      <RefreshCw className="ne-spinning" size={19} />
+      Sending Announcement...
+    </>
+  ) : (
+    <>
+      <Send size={19} />
+      Send Announcement
+    </>
+  )}
+</button>
+
+{editingId && (
+  <button
+    type="button"
+    onClick={() => {
+      setEditingId(null)
+      setMessage('')
+      setError('')
+      setSuccess('')
+    }}
+    style={{ marginTop: '10px' }}
+  >
+    Cancel Edit
+  </button>
+)}
 
               <p className="ne-security-note">
                 <CheckCircle2 size={14} />
