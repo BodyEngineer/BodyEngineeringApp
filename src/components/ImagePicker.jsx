@@ -5,18 +5,20 @@ export default function ImagePicker({
   image,
   setImage,
 }) {
-  const inputRef = useRef();
+  const inputRef = useRef(null);
 
   return (
     <div className="image-picker">
-  
       <h3>{label}</h3>
-  
+
       <div className="image-preview">
-  
         {image ? (
           <img
-            src={URL.createObjectURL(image)}
+            src={
+              image instanceof File
+                ? URL.createObjectURL(image)
+                : image
+            }
             alt={label}
             className="progress-photo"
           />
@@ -27,40 +29,46 @@ export default function ImagePicker({
             No Image Selected
           </div>
         )}
-  
       </div>
-  
+
       <input
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         hidden
         onChange={(e) => {
-          if (e.target.files[0]) {
-            setImage(e.target.files[0]);
+          const file = e.target.files?.[0];
+
+          if (file) {
+            setImage(file);
           }
+
+          e.target.value = "";
         }}
       />
-  
+
       <button
         type="button"
         className="upload-btn"
-        onClick={() => inputRef.current.click()}
+        onClick={() => inputRef.current?.click()}
       >
         📷 Camera / Gallery
       </button>
-  
+
       {image && (
         <button
           type="button"
           className="remove-btn"
-          onClick={() => setImage(null)}
+          onClick={() => {
+            setImage(null);
+            if (inputRef.current) {
+              inputRef.current.value = "";
+            }
+          }}
         >
           ❌ Remove
         </button>
       )}
-  
     </div>
   );
 }

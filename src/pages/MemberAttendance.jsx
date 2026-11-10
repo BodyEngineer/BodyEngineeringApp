@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
 import { supabase } from "../lib/supabase";
+import "./MemberDashboard.css";
 
 export default function MemberAttendance() {
   const navigate = useNavigate();

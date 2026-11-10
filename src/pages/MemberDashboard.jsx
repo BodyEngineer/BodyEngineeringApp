@@ -20,6 +20,7 @@ export default function MemberDashboard() {
   const [paymentRequest, setPaymentRequest] = useState(null);
   const [renewalPeriod, setRenewalPeriod] = useState("monthly");
   const [showAnnouncementHistory, setShowAnnouncementHistory] = useState(false);
+  const [showRenewalForm, setShowRenewalForm] = useState(false);
 
   // =========================
   // STUDIO ANNOUNCEMENTS
@@ -462,887 +463,554 @@ export default function MemberDashboard() {
       : "No Visits";
 
   return (
-    <div className="page">
+    <div className="member-dashboard-page">
 
       {/* =========================
           PREMIUM HERO
       ========================= */}
 
-      <div className="premium-hero">
-        <div className="hero-left">
+     {/* PREMIUM MEMBER HEADER */}
 
-          <div className="avatar-ring">
-            <img
-              src={
-                member.profile_photo ||
-                "https://i.pravatar.cc/200"
-              }
-              className="member-avatar"
-              alt="profile"
-            />
-          </div>
+<header className="member-header" id="member-home">
+  <div className="member-brand">
+    <div className="brand-icon">BE</div>
+    <div>
+      <div className="brand-title">BODY ENGINEERING</div>
+      <div className="brand-subtitle">MEMBER CLUB</div>
+    </div>
+  </div>
 
-          <div>
-            <p className="hero-brand">
-              BODY ENGINEERING
-              Female Fitness Studio
-            </p>
+  <div className="header-actions">
+    <button
+      type="button"
+      className="header-icon-btn"
+      onClick={() =>
+        document.getElementById("studio-announcements")
+          ?.scrollIntoView({ behavior: "smooth" })
+      }
+      aria-label="Studio announcements"
+    >
+      🔔
+    </button>
 
-            <h1>
-              Welcome,
-              <span className="hero-name">
-                {" "}{member.full_name}
-              </span>
-            </h1>
+    <button
+      type="button"
+      className="header-icon-btn"
+      onClick={handleLogout}
+      aria-label="Sign out"
+    >
+      ↗️
+    </button>
+  </div>
+</header>
 
-            <p className="hero-message">
-              💪 Every workout makes you stronger.
-            </p>
+{/* WELCOME SECTION */}
 
-            <p className="hero-quote">
-              "The Body Achieves What Mind Believes".
-            </p>
+<section className="welcome-section">
+  <div>
+    <p className="welcome-eyebrow">YOUR FITNESS JOURNEY</p>
 
-            <div className="hero-stats">
-              <div className="hero-pill">
-                🏆 {member.membership_type}
-              </div>
+    <h1 className="welcome-title">
+      Welcome back,
+      <br />
+      <span>{member.full_name}</span>
+    </h1>
 
-              <div className="hero-pill">
-                ❤️ {assessment?.goal || "Fitness Goal"}
-              </div>
+    <p className="welcome-description">
+      Every workout makes you stronger.
+    </p>
+  </div>
 
-              <div className="hero-pill">
-                ⚖️ {assessment?.weight || "--"} kg
-              </div>
-            </div>
-          </div>
-        </div>
+  <div className="welcome-profile">
+    <img
+      src={member.profile_photo || "https://i.pravatar.cc/200"}
+      alt="Member profile"
+      className="welcome-avatar"
+    />
+  </div>
+</section>
 
-        <div className="hero-right">
-          <div
-            className={`status-pill ${
-              isExpired
-                ? "status-expired"
-                : "status-active"
-            }`}
-          >
-            {isExpired
-              ? "🔴 MEMBERSHIP EXPIRED"
-              : "🟢 ACTIVE"}
-          </div>
+{/* MEMBERSHIP CARD */}
 
-          <div className="days-box">
-            <h1>
-              {expiry ? displayDays : "—"}
-            </h1>
+<section className="membership-card">
+  <div className="membership-heading">
+    <div>
+      <p className="welcome-eyebrow">YOUR MEMBERSHIP</p>
+      <h2>{member.membership_type || "Fitness Membership"}</h2>
+    </div>
 
-            <p>
-              {!expiry
-                ? "Renewal Required"
-                : isExpired
-                ? "Days Expired"
-                : "Days Remaining"}
-            </p>
-          </div>
+    <span
+      className={`membership-status ${
+        isExpired ? "expired" : "active"
+      }`}
+    >
+      {isExpired ? "EXPIRED" : "ACTIVE"}
+    </span>
+  </div>
 
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
+  <div className="membership-days">
+    <strong>{expiry ? displayDays : "—"}</strong>
+    <span>
+      {!expiry
+        ? "Renewal required"
+        : isExpired
+        ? "Days expired"
+        : "Days remaining"}
+    </span>
+  </div>
 
-      {/* =========================
-          STUDIO ANNOUNCEMENTS
-          NEW FEATURE
-      ========================= */}
+  <div className="membership-caption">
+    <span>Membership expiry</span>
+    <strong>
+      {membershipExpiry
+        ? new Date(`${membershipExpiry}T00:00:00`).toLocaleDateString(
+            "en-IN",
+            {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }
+          )
+        : "Not available"}
+    </strong>
+  </div>
+</section>
 
-      {memberType === "gym" && (
-        <section
-          className="assessment-card"
-          style={{
-            marginTop: "24px",
-            padding: "24px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "12px",
-              flexWrap: "wrap",
-              marginBottom: "20px",
-            }}
-          >
-            <div>
-              <p
-                style={{
-                  color: "#ff4438",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  letterSpacing: "1.5px",
-                }}
-              >
-                BODY ENGINEERING
-              </p>
+{/* QUICK ACCESS */}
 
-              <h2 style={{ margin: "5px 0" }}>
-                🔔 Studio Announcements
-              </h2>
+<section className="quick-access-grid">
 
-              <p style={{ opacity: 0.7, margin: 0 }}>
-                Latest updates from your fitness studio.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                loadAnnouncements(member, memberType)
-              }
-              disabled={announcementsLoading}
-              style={{
-                background: "#ff4438",
-                color: "#fff",
-                border: "none",
-                padding: "9px 15px",
-                borderRadius: "9px",
-                cursor: announcementsLoading
-                  ? "not-allowed"
-                  : "pointer",
-                fontWeight: "600",
-              }}
-            >
-              {announcementsLoading
-                ? "Loading..."
-                : "↻ Refresh"}
-            </button>
-          </div>
-
-          {announcementsLoading ? (
-            <p style={{ opacity: 0.7 }}>
-              Loading announcements...
-            </p>
-          ) : announcementError ? (
-            <div>
-              <p style={{ color: "#ff6b6b" }}>
-                {announcementError}
-              </p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  loadAnnouncements(member, memberType)
-                }
-              >
-                Try Again
-              </button>
-            </div>
-          ) : announcements.length === 0 ? (
-            <div
-              style={{
-                padding: "24px",
-                textAlign: "center",
-                background: "#1b1b1b",
-                borderRadius: "14px",
-              }}
-            >
-              <div style={{ fontSize: "32px" }}>
-                📢
-              </div>
-
-              <h3>No Announcements Yet</h3>
-
-              <p style={{ opacity: 0.65 }}>
-                Your studio updates will appear here.
-              </p>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gap: "14px",
-              }}
-            >
-              {announcements
-  .slice(0, showAnnouncementHistory ? announcements.length : 1)
-  .map((announcement) => {
-                const announcementDate =
-                  announcement.sent_at ||
-                  announcement.created_at;
-
-                return (
-                  <div
-                    key={announcement.id}
-                    style={{
-                      background: "#1b1b1b",
-                      border: "1px solid #333",
-                      borderLeft: "4px solid #ff4438",
-                      borderRadius: "14px",
-                      padding: "18px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "10px",
-                        flexWrap: "wrap",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      <strong>
-                        📢 Studio Update
-                      </strong>
-
-                      <span
-                        style={{
-                          color: "#aaa",
-                          fontSize: "12px",
-                        }}
-                      >
-                        {announcementDate
-                          ? new Date(
-                              announcementDate
-                            ).toLocaleString("en-IN", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "Recently"}
-                      </span>
-                    </div>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        lineHeight: "1.7",
-                        whiteSpace: "pre-wrap",
-                        overflowWrap: "anywhere",
-                      }}
-                    >
-                      {announcement.message}
-                    </p>
-                    
-
-                  </div>
-                );
-              })}
-
-{announcements.length > 1 && (
   <button
     type="button"
-    onClick={() =>
-      setShowAnnouncementHistory(!showAnnouncementHistory)
-    }
-    style={{
-      width: "100%",
-      marginTop: "14px",
-      padding: "13px",
-      borderRadius: "10px",
-      border: "1px solid #ff4438",
-      background: "transparent",
-      color: "#ff4438",
-      fontWeight: "700",
-      cursor: "pointer",
-    }}
+    className="quick-access-card"
+    onClick={() => navigate("/member-attendance")}
   >
-    {showAnnouncementHistory
-      ? "Hide Announcement History"
-      : `View Announcement History (${announcements.length - 1})`}
+    <span className="quick-access-icon">📋</span>
+    <strong>Attendance</strong>
+    <span>Track your visits</span>
   </button>
-)}
 
-            </div>
-          )}
-        </section>
-      )}
+  <button
+    type="button"
+    className="quick-access-card"
+    onClick={() =>
+      navigate("/member-dashboard/my-transformation")
+    }
+  >
+    <span className="quick-access-icon">❤️</span>
+    <strong>My Progress</strong>
+    <span>Track your journey</span>
+  </button>
 
-      {/* =========================
-          ATTENDANCE CTA
-      ========================= */}
+  <button
+    type="button"
+    className="quick-access-card"
+    onClick={() => navigate("/member-diet-plan")}
+  >
+    <span className="quick-access-icon">🥗</span>
+    <strong>Diet Plan</strong>
+    <span>Your nutrition guide</span>
+  </button>
 
-      {memberType === "gym" && (
-        <div className="attendance-cta">
-          <div className="attendance-cta-left">
-            <div className="attendance-qr-icon">
-              📱
-            </div>
+  <button
+    type="button"
+    className="quick-access-card"
+    onClick={() =>
+      navigate("/member-dashboard/workout-plan")
+    }
+  >
+    <span className="quick-access-icon">🏋️</span>
+    <strong>Workout Plan</strong>
+    <span>Your training schedule</span>
+  </button>
 
-            <div>
-              <span className="attendance-label">
-                DAILY ATTENDANCE
-              </span>
+</section>
 
-              <h2>
-                {!checkedInToday
-                  ? "Mark Today's Attendance"
-                  : checkedOutToday
-                  ? "You've completed today's workout! 🎉"
-                  : "You're checked in today! 🎉"}
-              </h2>
+     {/* =========================
+    STUDIO ANNOUNCEMENTS
+========================= */}
 
-              <p>
-                {!checkedInToday
-                  ? "Scan the gym QR code to record your workout visit."
-                  : checkedOutToday
-                  ? "Great work today! Your check-out has been recorded."
-                  : "Your check-in is recorded. Scan the QR code again when leaving the gym."}
-              </p>
-            </div>
-          </div>
+{memberType === "gym" && (
+  <section
+    id="studio-announcements"
+    className="announcement-section"
+  >
+    <div className="announcement-heading">
+      <div>
+        <p className="welcome-eyebrow">
+          BODY ENGINEERING
+        </p>
 
-          <button
-            className="attendance-btn"
-            onClick={() => {
-              if (checkedInToday && checkedOutToday) {
-                setShowAttendanceHistory(true);
+        <h2>Studio Announcements</h2>
 
-                setTimeout(() => {
-                  document
-                    .getElementById("attendance-history")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 200);
-              } else {
-                navigate("/member-attendance");
-              }
-            }}
-          >
-            {!checkedInToday
-              ? "📷 Scan QR to Check In →"
-              : checkedOutToday
-              ? "View Attendance →"
-              : "📷 Scan QR to Check Out →"}
-          </button>
-        </div>
-      )}
-
-      {/* =========================
-          MEMBERSHIP RENEWAL
-      ========================= */}
-
-      {showRenewalCard && websiteSettings && (
-        <div
-          className={`renewal-card ${
-            isExpired
-              ? "renewal-expired"
-              : "renewal-active"
-          }`}
-        >
-          <h2 className="renewal-card-title">
-            {isExpired
-              ? "🚨 Your Membership Has Expired"
-              : "⚠️ Keep Your Fitness Journey Going!"}
-          </h2>
-
-          <p>
-            {isExpired
-              ? `Your membership expired ${Math.abs(
-                  daysRemaining
-                )} days ago.`
-              : `Your membership expires in ${daysRemaining} days.`}
-          </p>
-
-          <div className="renewal-layout">
-
-            {/* PAYMENT DETAILS */}
-
-            <div className="renewal-details">
-              <p>
-                <strong>Plan:</strong>{" "}
-                {member.membership_type}
-              </p>
-
-              <p>
-                <strong>Expiry Date:</strong>{" "}
-                {membershipExpiry
-                  ? new Date(
-                      `${membershipExpiry}T00:00:00`
-                    ).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })
-                  : "No expiry date"}
-              </p>
-
-              {/* RENEWAL PERIOD */}
-
-              <div style={{ marginTop: "18px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: "600",
-                  }}
-                >
-                  🔄 Renewal Period
-                </label>
-
-                <select
-                  value={renewalPeriod}
-                  onChange={(e) =>
-                    setRenewalPeriod(e.target.value)
-                  }
-                  disabled={
-                    paymentSubmitting ||
-                    paymentRequest?.status === "pending"
-                  }
-                  style={{
-                    width: "100%",
-                    maxWidth: "300px",
-                    padding: "12px",
-                    borderRadius: "10px",
-                    border: "1px solid #444",
-                    background: "#1b1b1b",
-                    color: "#fff",
-                    fontSize: "15px",
-                  }}
-                >
-                  <option value="monthly">
-                    Monthly — 1 Month
-                  </option>
-
-                  <option value="quarterly">
-                    Quarterly — 3 Months
-                  </option>
-
-                  <option value="half-yearly">
-                    Half-Yearly — 6 Months
-                  </option>
-
-                  <option value="yearly">
-                    Yearly — 12 Months
-                  </option>
-                </select>
-              </div>
-
-              <p>
-                <strong>UPI ID:</strong>{" "}
-                {websiteSettings.upi_id || "Not available"}
-              </p>
-
-              {/* PAYMENT AMOUNT */}
-
-              <div style={{ marginTop: "20px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: "600",
-                  }}
-                >
-                  Payment Amount
-                </label>
-
-                <input
-                  type="number"
-                  min="1"
-                  value={paymentAmount}
-                  onChange={(e) =>
-                    setPaymentAmount(e.target.value)
-                  }
-                  placeholder="Enter amount paid"
-                  disabled={paymentSubmitting}
-                  style={{
-                    width: "100%",
-                    maxWidth: "300px",
-                    padding: "12px",
-                    borderRadius: "10px",
-                    border: "1px solid #444",
-                    background: "#1b1b1b",
-                    color: "#fff",
-                  }}
-                />
-              </div>
-
-              {/* PAYMENT SCREENSHOT */}
-
-              <div style={{ marginTop: "18px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: "600",
-                  }}
-                >
-                  Payment Screenshot
-                </label>
-
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={(e) =>
-                    setPaymentFile(
-                      e.target.files?.[0] || null
-                    )
-                  }
-                  disabled={paymentSubmitting}
-                />
-
-                {paymentFile && (
-                  <p
-                    style={{
-                      marginTop: "8px",
-                      fontSize: "14px",
-                      opacity: 0.8,
-                    }}
-                  >
-                    📎 {paymentFile.name}
-                  </p>
-                )}
-              </div>
-
-              {/* SUBMIT PAYMENT */}
-
-              <button
-                type="button"
-                onClick={handlePaymentSubmit}
-                disabled={
-                  paymentSubmitting ||
-                  paymentRequest?.status === "pending"
-                }
-                style={{
-                  marginTop: "18px",
-                  padding: "12px 22px",
-                  borderRadius: "10px",
-                  border: "none",
-                  background:
-                    paymentRequest?.status === "pending"
-                      ? "#555"
-                      : "#ff4438",
-                  color: "#fff",
-                  fontWeight: "700",
-                  cursor:
-                    paymentSubmitting ||
-                    paymentRequest?.status === "pending"
-                      ? "not-allowed"
-                      : "pointer",
-                }}
-              >
-                {paymentSubmitting
-                  ? "Uploading..."
-                  : paymentRequest?.status === "pending"
-                  ? "⏳ Verification Pending"
-                  : isExpired
-                  ? "🔴 Renew Membership Now"
-                  : "💳 Renew Membership"}
-              </button>
-
-              {/* PAYMENT MESSAGE */}
-
-              {paymentMessage && (
-                <p
-                  style={{
-                    marginTop: "12px",
-                    fontWeight: "600",
-                  }}
-                >
-                  {paymentMessage}
-                </p>
-              )}
-
-              {/* PAYMENT REQUEST STATUS */}
-
-              {paymentRequest && (
-                <div
-                  style={{
-                    marginTop: "18px",
-                    padding: "14px",
-                    borderRadius: "12px",
-                    background: "#1b1b1b",
-                  }}
-                >
-                  <strong>Payment Request:</strong>
-
-                  <p style={{ margin: "6px 0 0" }}>
-                    Amount: ₹{paymentRequest.amount}
-                  </p>
-
-                  <p style={{ margin: "6px 0 0" }}>
-                    Renewal:{" "}
-                    {paymentRequest.renewal_period === "monthly"
-                      ? "Monthly — 1 Month"
-                      : paymentRequest.renewal_period === "quarterly"
-                      ? "Quarterly — 3 Months"
-                      : paymentRequest.renewal_period === "half-yearly"
-                      ? "Half-Yearly — 6 Months"
-                      : paymentRequest.renewal_period === "yearly"
-                      ? "Yearly — 12 Months"
-                      : paymentRequest.renewal_period || "—"}
-                  </p>
-
-                  <p style={{ margin: "6px 0 0" }}>
-                    Status:{" "}
-                    {paymentRequest.status === "pending"
-                      ? "⏳ Pending Verification"
-                      : paymentRequest.status === "approved"
-                      ? "✅ Approved"
-                      : paymentRequest.status === "rejected"
-                      ? "❌ Rejected"
-                      : paymentRequest.status}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* PAYMENT QR */}
-
-            {qrImageUrl && (
-              <div className="renewal-qr">
-                <p>
-                  <strong>Scan & Pay</strong>
-                </p>
-
-                <img
-                  src={qrImageUrl}
-                  alt="Payment QR"
-                  className="renewal-qr-image"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* =========================
-          FITNESS OVERVIEW
-      ========================= */}
-
-      <div className="assessment-card">
-        <h2>📊 Fitness Overview</h2>
-
-        <div className="quick-grid">
-
-          <div className="quick-card">
-            <div className="quick-icon">👤</div>
-
-            <h3>My Profile</h3>
-
-            <p>
-              Update your personal information
-            </p>
-
-            <button
-              className="view-btn"
-              onClick={() =>
-                navigate("/member-dashboard/profile")
-              }
-            >
-              Open Profile →
-            </button>
-          </div>
-
-          <div className="quick-card">
-            <div className="quick-icon">⚖️</div>
-            <h3>Weight</h3>
-            <h1>{assessment?.weight || "--"} kg</h1>
-          </div>
-
-          <div className="quick-card">
-            <div className="quick-icon">❤️</div>
-            <h3>BMI</h3>
-            <h1>{assessment?.bmi || "--"}</h1>
-          </div>
-
-          <div className="quick-card">
-            <div className="quick-icon">💧</div>
-            <h3>Body Fat</h3>
-            <h1>{assessment?.body_fat || "--"}%</h1>
-          </div>
-
-          {memberType === "gym" && (
-            <div className="quick-card">
-              <div className="quick-icon">🏋️</div>
-              <h3>Total Visits</h3>
-              <h1>{totalVisits}</h1>
-            </div>
-          )}
-        </div>
+        <p className="announcement-description">
+          Latest updates from your fitness studio.
+        </p>
       </div>
 
-      {/* =========================
-          MY COACHING
-      ========================= */}
+      <button
+        type="button"
+        className="announcement-new"
+        onClick={() =>
+          loadAnnouncements(member, memberType)
+        }
+        disabled={announcementsLoading}
+      >
+        {announcementsLoading ? "Loading..." : "↻ Refresh"}
+      </button>
+    </div>
 
-      <section className="coaching-section">
-        <div className="coaching-section-header">
-          <div>
-            <p className="coaching-eyebrow">
-              PERSONALIZED COACHING
-            </p>
+    {announcementsLoading ? (
+      <div className="announcement-item">
+        Loading announcements...
+      </div>
+    ) : announcementError ? (
+      <div className="announcement-item">
+        <p>{announcementError}</p>
 
-            <h2>🏆 My Coaching</h2>
+        <button
+          type="button"
+          className="announcement-new"
+          onClick={() =>
+            loadAnnouncements(member, memberType)
+          }
+        >
+          Try Again
+        </button>
+      </div>
+    ) : announcements.length === 0 ? (
+      <div className="announcement-item">
+        <div className="quick-access-icon">📢</div>
 
-            <p className="coaching-subtitle">
-              Your personalised plans, attendance,
-              progress and transformation journey.
-            </p>
-          </div>
-        </div>
+        <h3>No Announcements Yet</h3>
 
-        <div className="coaching-grid">
+        <p className="announcement-description">
+          Your studio updates will appear here.
+        </p>
+      </div>
+    ) : (
+      <div>
+        {announcements
+          .slice(
+            0,
+            showAnnouncementHistory
+              ? announcements.length
+              : 1
+          )
+          .map((announcement) => {
+            const announcementDate =
+              announcement.sent_at ||
+              announcement.created_at;
 
-          {/* WORKOUT PLAN */}
+            return (
+              <article
+                key={announcement.id}
+                className="announcement-item"
+              >
+                <div className="announcement-item-header">
+                  <strong>📢 Studio Update</strong>
 
-          <div
-            className="coaching-card"
-            onClick={() =>
-              navigate("/member-dashboard/workout-plan")
-            }
-          >
-            <div className="coaching-card-top">
-              <div className="coaching-card-icon">
-                🏋️
-              </div>
-
-              <span className="coaching-card-badge">
-                TRAINING
-              </span>
-            </div>
-
-            <div className="coaching-card-content">
-              <h3>Workout Plan</h3>
-
-              <p>
-                View your weekly workout schedule,
-                exercises and training programme
-                designed by your coach.
-              </p>
-
-              <div className="coaching-card-link">
-                View Workout Plan →
-              </div>
-            </div>
-          </div>
-
-          {/* DIET PLAN */}
-
-          <div
-            className="coaching-card"
-            onClick={() =>
-              navigate("/member-diet-plan")
-            }
-          >
-            <div className="coaching-card-top">
-              <div className="coaching-card-icon">
-                🥗
-              </div>
-
-              <span className="coaching-card-badge">
-                NUTRITION
-              </span>
-            </div>
-
-            <div className="coaching-card-content">
-              <h3>Personalized Nutrition</h3>
-
-              <p>
-                View your daily nutrition plan,
-                meals, hydration guide and
-                dietary recommendations.
-              </p>
-
-              <div className="coaching-card-link">
-                View Diet Plan →
-              </div>
-            </div>
-          </div>
-
-          {/* PUSH NOTIFICATION PERMISSION */}
-
-          {memberType === "gym" && (
-            <EnableNotifications memberType={memberType} />
-          )}
-
-          {/* ATTENDANCE */}
-
-          {memberType === "gym" && (
-            <div
-              className="coaching-card"
-              onClick={() => {
-                setShowAttendanceHistory(true);
-
-                setTimeout(() => {
-                  document
-                    .getElementById("attendance-history")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 100);
-              }}
-            >
-              <div className="coaching-card-top">
-                <div className="coaching-card-icon">
-                  📋
+                  <span>
+                    {announcementDate
+                      ? new Date(
+                          announcementDate
+                        ).toLocaleString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Recently"}
+                  </span>
                 </div>
 
-                <span className="coaching-card-badge">
-                  ATTENDANCE
-                </span>
-              </div>
-
-              <div className="coaching-card-content">
-                <h3>Attendance</h3>
-
-                <p>
-                  Track your gym visits, check-in
-                  history and maintain your
-                  training consistency.
+                <p className="announcement-message">
+                  {announcement.message}
                 </p>
+              </article>
+            );
+          })}
 
-                <div className="coaching-card-link">
-                  View Attendance History →
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TRANSFORMATION */}
-
-          <div
-            className="coaching-card"
+        {announcements.length > 1 && (
+          <button
+            type="button"
+            className="announcement-history-toggle"
             onClick={() =>
-              navigate("/member-dashboard/my-transformation")
+              setShowAnnouncementHistory(
+                (prev) => !prev
+              )
             }
           >
-            <div className="coaching-card-top">
-              <div className="coaching-card-icon">
-                ❤️
-              </div>
+            {showAnnouncementHistory
+              ? "Hide Announcement History ↑"
+              : `View Announcement History (${announcements.length - 1}) ↓`}
+          </button>
+        )}
+      </div>
+    )}
+  </section>
+)}
 
-              <span className="coaching-card-badge">
-                PROGRESS
-              </span>
-            </div>
+     {/* STUDIO NOTIFICATION SETTINGS */}
 
-            <div className="coaching-card-content">
-              <h3>My Transformation</h3>
+{memberType === "gym" && (
+  <EnableNotifications memberType={memberType} />
+)}
 
-              <p>
-                Track your measurements, progress,
-                transformation photos and coach notes.
-              </p>
+{/* =========================
+  MEMBERSHIP RENEWAL
+========================= */}
 
-              <div className="coaching-card-link">
-                View Transformation →
-              </div>
-            </div>
-          </div>
+{showRenewalCard && websiteSettings && (
+<div className="renewal-card">
+
+  {/* RENEWAL HEADER */}
+
+  <div className="renewal-card-header">
+    <div>
+      <span className="renewal-eyebrow">
+        BODY ENGINEERING
+      </span>
+
+      <h2 className="renewal-card-title">
+        Membership Renewal
+      </h2>
+
+      <p className="renewal-summary-text">
+        {isExpired
+          ? `Your membership expired ${Math.abs(daysRemaining)} days ago.`
+          : `Your membership expires in ${daysRemaining} days.`}
+      </p>
+    </div>
+
+    <span
+      className={`renewal-status ${
+        isExpired ? "expired" : "active"
+      }`}
+    >
+      {isExpired ? "EXPIRED" : "ACTIVE"}
+    </span>
+  </div>
+
+  {/* TOGGLE BUTTON */}
+
+  <button
+    type="button"
+    className="renewal-toggle"
+    onClick={() => setShowRenewalForm((prev) => !prev)}
+  >
+    {showRenewalForm
+      ? "Close Renewal Form ↑"
+      : "Renew Membership →"}
+  </button>
+
+  {/* PAYMENT FORM */}
+
+  {showRenewalForm && (
+    <div className="renewal-layout">
+
+      <div className="renewal-details">
+
+        <div className="renewal-field">
+          <label>Renewal Period</label>
+
+          <select
+            value={renewalPeriod}
+            onChange={(e) => setRenewalPeriod(e.target.value)}
+            disabled={
+              paymentSubmitting ||
+              paymentRequest?.status === "pending"
+            }
+          >
+            <option value="monthly">Monthly — 1 Month</option>
+            <option value="quarterly">Quarterly — 3 Months</option>
+            <option value="half-yearly">Half-Yearly — 6 Months</option>
+            <option value="yearly">Yearly — 12 Months</option>
+          </select>
         </div>
-      </section>
 
+        <div className="renewal-upi">
+          <span>UPI ID</span>
+          <strong>
+            {websiteSettings.upi_id || "Not available"}
+          </strong>
+        </div>
+
+        <div className="renewal-field">
+          <label>Payment Amount (₹)</label>
+
+          <input
+            type="number"
+            min="1"
+            value={paymentAmount}
+            onChange={(e) => setPaymentAmount(e.target.value)}
+            placeholder="Enter amount paid"
+            disabled={paymentSubmitting}
+          />
+        </div>
+
+        <div className="renewal-field">
+          <label>Payment Screenshot</label>
+
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) =>
+              setPaymentFile(e.target.files?.[0] || null)
+            }
+            disabled={paymentSubmitting}
+          />
+
+          {paymentFile && (
+            <p className="renewal-file-name">
+              📎 {paymentFile.name}
+            </p>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="renewal-submit-btn"
+          onClick={handlePaymentSubmit}
+          disabled={
+            paymentSubmitting ||
+            paymentRequest?.status === "pending"
+          }
+        >
+          {paymentSubmitting
+            ? "Uploading..."
+            : paymentRequest?.status === "pending"
+            ? "Verification Pending"
+            : "Submit Renewal Payment"}
+        </button>
+
+        {paymentMessage && (
+          <p className="renewal-message">{paymentMessage}</p>
+        )}
+
+        {paymentRequest && (
+          <div className="renewal-request-status">
+            <strong>Payment Request Status</strong>
+
+            <p>Amount: ₹{paymentRequest.amount}</p>
+
+            <p>
+              Renewal:{" "}
+              {paymentRequest.renewal_period === "monthly"
+                ? "Monthly — 1 Month"
+                : paymentRequest.renewal_period === "quarterly"
+                ? "Quarterly — 3 Months"
+                : paymentRequest.renewal_period === "half-yearly"
+                ? "Half-Yearly — 6 Months"
+                : paymentRequest.renewal_period === "yearly"
+                ? "Yearly — 12 Months"
+                : paymentRequest.renewal_period || "—"}
+            </p>
+
+            <p>
+              Status:{" "}
+              {paymentRequest.status === "pending"
+                ? "Pending Verification"
+                : paymentRequest.status === "approved"
+                ? "Approved"
+                : paymentRequest.status === "rejected"
+                ? "Rejected"
+                : paymentRequest.status}
+            </p>
+          </div>
+        )}
+
+      </div>
+
+      {qrImageUrl && (
+        <div className="renewal-qr">
+          <p><strong>SCAN & PAY</strong></p>
+
+          <img
+            src={qrImageUrl}
+            alt="Payment QR"
+            className="renewal-qr-image"
+          />
+
+          <span>Scan using any UPI app</span>
+        </div>
+      )}
+
+    </div>
+  )}
+
+</div>
+)}
+   {/* FITNESS OVERVIEW */}
+
+<section className="dashboard-section">
+  <div className="dashboard-section-title">
+    <div>
+      <p className="welcome-eyebrow">YOUR PERFORMANCE</p>
+      <h2>Fitness Overview</h2>
+      <p className="fitness-overview-subtitle">
+        Track your progress and stay consistent.
+      </p>
+    </div>
+  </div>
+
+  <div className="fitness-metrics">
+
+    <div className="metric-card">
+      <span className="metric-icon">⚖️</span>
+      <strong className="metric-value">
+        {assessment?.weight || "--"}
+        <small> kg</small>
+      </strong>
+      <span className="metric-label">Current Weight</span>
+    </div>
+
+    <div className="metric-card">
+      <span className="metric-icon">❤️</span>
+      <strong className="metric-value">
+        {assessment?.bmi || "--"}
+      </strong>
+      <span className="metric-label">BMI</span>
+    </div>
+
+    <div className="metric-card">
+      <span className="metric-icon">💧</span>
+      <strong className="metric-value">
+        {assessment?.body_fat || "--"}
+        <small>%</small>
+      </strong>
+      <span className="metric-label">Body Fat</span>
+    </div>
+
+    {memberType === "gym" && (
+      <div className="metric-card">
+        <span className="metric-icon">🏋️</span>
+        <strong className="metric-value">
+          {totalVisits}
+        </strong>
+        <span className="metric-label">Total Visits</span>
+      </div>
+    )}
+
+  </div>
+
+  <button
+    type="button"
+    className="profile-action-card"
+    onClick={() => navigate("/member-dashboard/profile")}
+  >
+    <span className="profile-action-icon">👤</span>
+
+    <span className="profile-action-content">
+      <strong>My Profile</strong>
+      <small>View and update your personal information</small>
+    </span>
+
+    <span className="profile-action-arrow">→</span>
+  </button>
+</section>
+    
       {/* =========================
           ATTENDANCE HISTORY
       ========================= */}
@@ -1471,6 +1139,54 @@ export default function MemberDashboard() {
             )}
           </div>
         )}
+
+        {/* MOBILE & TABLET BOTTOM NAVIGATION */}
+
+<nav className="member-bottom-nav">
+  <button
+    type="button"
+    className="member-nav-item active"
+    onClick={() =>
+      document.getElementById("member-home")
+        ?.scrollIntoView({ behavior: "smooth" })
+    }
+  >
+    <span>⌂</span>
+    <small>Home</small>
+  </button>
+
+  <button
+    type="button"
+    className="member-nav-item"
+    onClick={() => navigate("/member-attendance")}
+  >
+    <span>▦</span>
+    <small>Attendance</small>
+  </button>
+
+  <button
+    type="button"
+    className="member-nav-item"
+    onClick={() =>
+      navigate("/member-dashboard/my-transformation")
+    }
+  >
+    <span>↗️</span>
+    <small>Progress</small>
+  </button>
+
+  <button
+    type="button"
+    className="member-nav-item"
+    onClick={() =>
+      navigate("/member-dashboard/profile")
+    }
+  >
+    <span>◎</span>
+    <small>Profile</small>
+  </button>
+</nav>
+
     </div>
   );
 }

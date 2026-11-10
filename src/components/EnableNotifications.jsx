@@ -191,59 +191,67 @@ export default function EnableNotifications({ memberType }) {
   }
 
   return (
-    <div
-      className="coaching-card notification-settings-card"
-      style={{ cursor: 'default' }}
-    >
-      <div className="coaching-card-top">
-        <div className="coaching-card-icon">
-          🔔
+    <div className="notification-card">
+  
+      <div className="notification-card-header">
+        <div className="notification-card-brand">
+          <div className="notification-card-icon">
+            🔔
+          </div>
+  
+          <div>
+            <p className="notification-eyebrow">
+              BODY ENGINEERING
+            </p>
+            <h3>Studio Notifications</h3>
+          </div>
         </div>
-
-        <span className="coaching-card-badge">
-          {isEnabled ? 'ENABLED' : 'SETTINGS'}
+  
+        <span
+          className={`notification-status ${
+            isEnabled ? "enabled" : "disabled"
+          }`}
+        >
+          {isEnabled ? "ENABLED" : "DISABLED"}
         </span>
       </div>
-
-      <div className="coaching-card-content">
-        <h3>Studio Notifications</h3>
-
-        <p>
-          Receive important announcements and updates from
-          Body Engineering.
-        </p>
-
-        <div style={{ marginTop: '16px' }}>
-          {isEnabled ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleDisableNotifications}
-              disabled={loading}
-            >
-              {loading ? 'Disabling...' : 'Disable Notifications'}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleEnableNotifications}
-              disabled={loading}
-            >
-              {loading ? 'Enabling...' : 'Enable Notifications'}
-            </button>
-          )}
-        </div>
-     
-        {message && (
-          <p
-            role="status"
-            style={{ marginTop: '12px', fontSize: '13px' }}
+  
+      <p className="notification-description">
+        Receive important announcements and updates from
+        Body Engineering.
+      </p>
+  
+      <div className="notification-card-action">
+        {isEnabled ? (
+          <button
+            type="button"
+            className="notification-action-btn"
+            onClick={handleDisableNotifications}
+            disabled={loading}
           >
-            {message}
-          </p>
+            {loading ? "Disabling..." : "Disable Notifications"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="notification-action-btn"
+            onClick={handleEnableNotifications}
+            disabled={loading}
+          >
+            {loading ? "Enabling..." : "Enable Notifications"}
+          </button>
         )}
       </div>
+  
+      {message && (
+        <p
+          className="notification-message"
+          role="status"
+        >
+          {message}
+        </p>
+      )}
+  
     </div>
   )
 }
