@@ -65,3 +65,16 @@ import {
       })
     )
   })
+
+  // Clear notifications when requested by the app
+self.addEventListener('message', (event) => {
+    if (event.data?.type === 'CLEAR_NOTIFICATIONS') {
+      event.waitUntil(
+        self.registration.getNotifications().then((notifications) => {
+          notifications.forEach((notification) => {
+            notification.close()
+          })
+        })
+      )
+    }
+  })
