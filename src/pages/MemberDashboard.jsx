@@ -1009,14 +1009,45 @@ export default function MemberDashboard() {
 
     <span className="profile-action-arrow">→</span>
   </button>
+
+  {memberType === "gym" && (
+  <button
+    type="button"
+    className="profile-action-card"
+    onClick={() => {
+      setShowAttendanceHistory((prev) => !prev);
+
+      setTimeout(() => {
+        document
+          .getElementById("attendance-history")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }}
+  >
+    <span className="profile-action-icon">📅</span>
+
+    <span className="profile-action-content">
+      <strong>
+        {showAttendanceHistory
+          ? "Hide Attendance History"
+          : "Attendance History"}
+      </strong>
+      <small>
+        View your previous gym visits and workout duration
+      </small>
+    </span>
+
+    <span className="profile-action-arrow">→</span>
+  </button>
+)}
+
 </section>
     
       {/* =========================
           ATTENDANCE HISTORY
       ========================= */}
 
-      {showAttendanceHistory &&
-        memberType === "gym" && (
+{showAttendanceHistory && memberType === "gym" && (
           <div
             id="attendance-history"
             className="attendance-history-panel"
