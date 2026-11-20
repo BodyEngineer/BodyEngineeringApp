@@ -6,7 +6,12 @@ export function addMonths(date, months) {
 
 export function calculateMembershipEnd(startDate, membershipType) {
   const start = new Date(startDate)
-  const months = membershipType === 'yearly' ? 12 : membershipType === 'quarterly' ? 3 : 1
+
+  const months =
+    membershipType === 'yearly' ? 12 :
+    membershipType === 'half-yearly' ? 6 :
+    membershipType === 'quarterly' ? 3 : 1
+
   return addMonths(start, months).toISOString().split('T')[0]
 }
 
@@ -87,5 +92,6 @@ export function formatDateTime(dateStr) {
 export const MEMBERSHIP_TYPES = [
   { value: 'monthly', label: 'Monthly' },
   { value: 'quarterly', label: 'Quarterly' },
+  { value: 'half-yearly', label: 'Half Yearly (6 Months)' },
   { value: 'yearly', label: 'Yearly' },
 ]
