@@ -74,27 +74,52 @@ export default function EditMember() {
       setUploading(false);
     }
 
-    const { error: updateError } = await supabase
-      .from("members")
-      .update({
+    const { data, error: functionError } =
+    await supabase.functions.invoke("update-member", {
+      body: {
+        member_id: id,
         full_name: form.full_name.trim(),
-        email: form.email.trim() || null,
+        email: form.email.trim(),
         phone: form.phone.trim(),
         membership_type: form.membership_type,
         membership_start: form.membership_start,
         membership_end: form.membership_end,
         batch_timing: form.batch_timing.trim() || null,
         notes: form.notes.trim() || null,
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      setError(updateError.message);
+      },
+    });
+  
+  if (functionError) {
+    setError(functionError.message);
+    setSaving(false);
+    return;
+  }
+  
+  if (!data?.success) {
+    setError(data?.error || "Member update failed");
+    setSaving(false);
+    return;
+  }
+  
+  // Save profile photo URL if a new photo was uploaded
+  if (profilePhoto) {
+    const { error: photoError } = await supabase
+      .from("members")
+      .update({ profile_photo: profilePhotoUrl })
+      .eq("id", id)
+      .eq("owner_id", user.id);
+  
+    if (photoError) {
+      setError(
+        "Member details updated, but profile photo update failed: " +
+        photoError.message
+      );
       setSaving(false);
       return;
     }
-
-    navigate(`/members/${id}`);
+  }
+  
+  navigate(`/members/${id}`);
   }
 
   if (loading) {
